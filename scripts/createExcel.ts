@@ -5,7 +5,7 @@ const data = [
   {
     "Tipo de documento del niño": "Rc",
     "Número de documento del niño": "1001",
-    "Nombre completo del niño": "Joseph David Rivera Ospina",
+    "Nombre completo del niño": "Joseph David Ri Os",
     "Sede": "Sede CDs pradito",
     "Tipo de paquete": "NM-365",
     "Recibe paquete": "si",
