@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Aplicación de Registro de Niños
 
-## Getting Started
+Esta aplicación permite buscar información de entrega de paquetes para niños utilizando su número de documento. La información se gestiona a través de un archivo Excel que se convierte automáticamente a JSON para su uso en la web.
 
-First, run the development server:
+## Requisitos Previos
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- [Node.js](https://nodejs.org/) (v18 o superior)
+- npm (incluido con Node.js)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Comandos Principales
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Desarrollo y Producción
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+*   **Ejecutar en desarrollo:**
+    ```bash
+    npm run dev
+    ```
+*   **Construir para producción:**
+    ```bash
+    npm run build
+    ```
+*   **Iniciar en producción:**
+    ```bash
+    npm run start
+    ```
 
-## Learn More
+### Gestión de Datos (Excel)
 
-To learn more about Next.js, take a look at the following resources:
+*   **Generar Excel de prueba:** Crea un archivo `datos.xlsx` con datos de ejemplo.
+    ```bash
+    npm run excel:create
+    ```
+*   **Convertir Excel a JSON:** Toma el contenido de `datos.xlsx` y lo guarda en `src/data/registros.json`.
+    ```bash
+    npm run excel:convert
+    ```
+*   **Sincronizar todo:** Ejecuta la creación y la conversión en un solo paso.
+    ```bash
+    npm run excel:sync
+    ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Estructura de Datos
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+El sistema espera un Excel con las siguientes columnas:
 
-## Deploy on Vercel
+- **Tipo de documento del niño** (Ej: Rc, Ti)
+- **Número de documento del niño** (Campo de búsqueda)
+- **Nombre completo del niño**
+- **Sede**
+- **Tipo de paquete**
+- **Recibe paquete** (si/no)
+- **fecha**
+- **hora**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Tecnologías Utilizadas
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Frontend:** Next.js (App Router), React, CSS puro.
+- **Backend:** Next.js API Routes.
+- **Procesamiento de datos:** biblioteca `xlsx` para manejo de archivos Excel.
