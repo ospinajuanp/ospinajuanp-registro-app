@@ -63,7 +63,13 @@ export default function Home() {
   };
 
   return (
-    <main className="main-container">
+      <main 
+        className="main-container" 
+        style={{ 
+          backgroundColor: resultado ? 'var(--bg)' : 'transparent',
+          backgroundImage: !resultado ? 'url(/buen-comienzo.jpg)' : 'none',
+        }}
+      >
       {!resultado ? (
         <form onSubmit={handleSubmit} className="input-group">
           <h1>¡Bienvenido!</h1>
@@ -108,19 +114,19 @@ export default function Home() {
                 )}
 
                 {resultado.fecha && (
-                  <p style={{ fontWeight: 500, fontSize: '0.95rem' }}>
+                  <p style={{ fontWeight: 500, fontSize: '1rem' }}>
                     📅 Fecha: {resultado.fecha}
                   </p>
                 )}
 
                 {resultado.hora && (
-                  <p style={{ fontWeight: 500, fontSize: '0.95rem' }}>
+                  <p style={{ fontWeight: 500, fontSize: '1rem' }}>
                     ⏰ Hora: {resultado.hora}
                   </p>
                 )}
                 
                 {resultado["Tipo de documento del niño"] && (
-                  <p style={{ fontSize: '0.85rem', opacity: 0.7, marginTop: '0.5rem' }}>
+                  <p style={{ fontSize: '1.2rem', opacity: 0.7, marginTop: '0.5rem' }}>
                     DOC: {resultado["Tipo de documento del niño"]} {resultado["Número de documento del niño"]}
                   </p>
                 )}
