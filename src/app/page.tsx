@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { logVisit } from "./actions";
 
 type Registro = {
   "Tipo de documento del niño"?: string;
@@ -19,10 +20,33 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resultado, setResultado] = useState<Registro | null>(null);
+  const [userName, setUserName] = useState("");
+  const [hasAcceptedPrivacy, setHasAcceptedPrivacy] = useState(false);
+  const [showCaptureForm, setShowCaptureForm] = useState(true);
+
+  // Check if user already filled the form in this session
+  useEffect(() => {
+    const saved = localStorage.getItem("visit-captured");
+    if (saved === "true") {
+      setShowCaptureForm(false);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    // Logging technical visit
+    try {
+      await logVisit({
+        id,
+        name: hasAcceptedPrivacy ? userName : undefined,
+        userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "Server",
+      });
+      localStorage.setItem("visit-captured", "true");
+    } catch (err) {
+      console.warn("KV Log failed, continuing with search...", err);
+    }
 
     if (!id.trim()) {
       setError("Por favor ingresa un ID.");
@@ -71,25 +95,67 @@ export default function Home() {
         }}
       >
       {!resultado ? (
-        <form onSubmit={handleSubmit} className="input-group">
+        <div className="input-group">
           <h1>¡Bienvenido!</h1>
-          <p>Ingresa el número de documento del niño para buscar la información.</p>
           
-          <input
-            type="text"
-            className="input-field"
-            placeholder="Ejemplo: 1001"
-            value={id}
-            onChange={(e) => setId(e.target.value)}
-            disabled={loading}
-          />
-          
-          {error && <div className="error-message">{error}</div>}
-          
-          <button type="submit" className="btn" disabled={loading}>
-            {loading ? <span className="loading-spinner"></span> : "Buscar"}
-          </button>
-        </form>
+          {showCaptureForm ? (
+            <div className="capture-form">
+              <p>Por favor, regístrate para continuar.</p>
+              <input
+                type="text"
+                className="input-field"
+                placeholder="Tu Nombre (Opcional)"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                style={{ marginBottom: '1rem' }}
+              />
+              <label className="privacy-checkbox">
+                <input
+                  type="checkbox"
+                  checked={hasAcceptedPrivacy}
+                  onChange={(e) => setHasAcceptedPrivacy(e.target.checked)}                  
+                />
+                <span style={{ color: 'black' }}>Acepto la Política de Privacidad</span>
+              </label>
+              <button 
+                type="button" 
+                className="btn" 
+                onClick={() => setShowCaptureForm(false)}
+                style={{ marginTop: '1rem'}}
+              >
+                Continuar a la búsqueda
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+              <p>Ingresa el número de documento del niño para buscar la información.</p>
+              
+              <input
+                type="text"
+                className="input-field"
+                placeholder="Ejemplo: 1001"
+                value={id}
+                onChange={(e) => setId(e.target.value)}
+                disabled={loading}
+              />
+              
+              {error && <div className="error-message">{error}</div>}
+              
+              <button type="submit" className="btn" disabled={loading} style={{ marginTop: '1rem' }}>
+                {loading ? <span className="loading-spinner" ></span> : "Buscar"}
+              </button>
+              
+              <button 
+                type="button" 
+                className="btn btn-secondary" 
+                style={{ marginTop: '0.5rem', opacity: 0.7 }}
+                onClick={() => setShowCaptureForm(true)}
+              >
+                Volver al registro
+              </button>
+            </form>
+          )}
+        </div>
       ) : (
         <div className="result-view">
           {((resultado["Recibe paquete"] || '').toLowerCase() === "si") && (

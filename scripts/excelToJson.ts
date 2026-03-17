@@ -1,26 +1,41 @@
-import xlsx from 'xlsx';
+import * as ExcelJS from 'exceljs';
 import * as path from 'path';
 import * as fs from 'fs';
 
-const excelFilePath = path.join(process.cwd(), 'datos.xlsx');
-const jsonFilePath = path.join(process.cwd(), 'src', 'data', 'registros.json');
+async function convert() {
+  const excelFilePath = path.join(process.cwd(), 'datos.xlsx');
+  const jsonFilePath = path.join(process.cwd(), 'src', 'data', 'registros.json');
 
-// Ensure output directory exists
-const dir = path.dirname(jsonFilePath);
-if (!fs.existsSync(dir)) {
-  fs.mkdirSync(dir, { recursive: true });
+  const dir = path.dirname(jsonFilePath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.readFile(excelFilePath);
+  const worksheet = workbook.worksheets[0];
+
+  const jsonData: Record<string, any>[] = [];
+  let headers: string[] = [];
+
+  worksheet.eachRow((row, rowNumber) => {
+    if (rowNumber === 1) {
+      // First row usually headers
+      headers = (row.values as string[]).map(v => v ? String(v) : '');
+    } else {
+      const rowData: Record<string, any> = {};
+      const values = row.values as any[];
+      headers.forEach((header, index) => {
+        if (header) {
+          rowData[header] = values[index] || '';
+        }
+      });
+      jsonData.push(rowData);
+    }
+  });
+
+  fs.writeFileSync(jsonFilePath, JSON.stringify(jsonData, null, 2), 'utf-8');
+  console.log(`JSON file generated smoothly at ${jsonFilePath}`);
 }
 
-// Read Excel file
-const workbook = xlsx.readFile(excelFilePath);
-const sheetName = workbook.SheetNames[0];
-const worksheet = workbook.Sheets[sheetName];
-
-// Convert to JSON dynamically using first row as headers
-// defval ensures that empty cells are read as empty strings
-const jsonData = xlsx.utils.sheet_to_json(worksheet, { defval: '' });
-
-// Write to JSON file
-fs.writeFileSync(jsonFilePath, JSON.stringify(jsonData, null, 2), 'utf-8');
-
-console.log(`JSON file generated smoothly at ${jsonFilePath}`);
+convert().catch(console.error);
