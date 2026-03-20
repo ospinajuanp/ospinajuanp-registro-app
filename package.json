@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "excel:create": "npx ts-node scripts/createExcel.ts",
-    "excel:convert": "npx ts-node scripts/excelToJson.ts",
+    "excel:create": "npx tsx scripts/createExcel.ts",
+    "excel:convert": "npx tsx scripts/excelToJson.ts",
     "excel:sync": "npm run excel:create && npm run excel:convert"
   },
   "dependencies": {
