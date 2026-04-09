@@ -54,13 +54,14 @@ export default function DownloadButton({ data }: DownloadButtonProps) {
         backgroundColor: 'var(--success, #28a745)',
         color: 'white',
         border: 'none',
-        padding: '0.75rem 1.5rem',
+        padding: '0.6rem 1.2rem',
         borderRadius: '12px',
-        fontWeight: '600',
+        fontWeight: '700',
         cursor: 'pointer',
         transition: 'all 0.3s ease',
-        boxShadow: '0 4px 14px 0 rgba(40, 167, 69, 0.39)',
-        marginTop: '1rem'
+        boxShadow: '0 4px 14px 0 rgba(40, 167, 69, 0.2)',
+        fontSize: '0.9rem',
+        width: 'auto'
       }}
       onMouseOver={(e) => {
         e.currentTarget.style.transform = 'translateY(-2px)';

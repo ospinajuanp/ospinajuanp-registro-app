@@ -1,6 +1,8 @@
 import { getVisits } from "../actions";
 import { headers } from "next/headers";
 import DownloadButton from "./DownloadButton";
+import DeleteDataButton from "./DeleteDataButton";
+import BackButton from "./BackButton";
 
 export const dynamic = "force-dynamic";
 
@@ -43,12 +45,32 @@ export default async function AdminPage({
 
   return (
     <div className="main-container" style={{ maxWidth: '900px', width: '95%' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
-        <div style={{ textAlign: 'left' }}>
-          <h1 style={{ textAlign: 'left', marginBottom: '0.2rem' }}>Panel Admin</h1>
-          <p style={{ textAlign: 'left', fontSize: '1rem' }}>Viendo registro de visitas ({visits.length})</p>
+      <BackButton />
+
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'flex-start', 
+        marginBottom: '2.5rem', 
+        flexWrap: 'wrap', 
+        gap: '1.5rem',
+        borderBottom: '1px solid #f1f3f5',
+        paddingBottom: '1.5rem'
+      }}>
+        <div style={{ textAlign: 'left', flex: '1', minWidth: '250px' }}>
+          <h1 style={{ textAlign: 'left', marginBottom: '0.2rem', fontSize: '2rem' }}>Panel Admin</h1>
+          <p style={{ textAlign: 'left', fontSize: '0.95rem', opacity: 0.8 }}>Registro total de visitas ({visits.length})</p>
         </div>
-        <DownloadButton data={visits} />
+        <div style={{ 
+          display: 'flex', 
+          gap: '0.75rem', 
+          alignItems: 'center', 
+          flexWrap: 'wrap',
+          justifyContent: 'flex-end'
+        }}>
+          <DownloadButton data={visits} />
+          <DeleteDataButton count={visits.length} />
+        </div>
       </div>
       
       <div style={{ 
@@ -121,20 +143,6 @@ export default async function AdminPage({
         </table>
       </div>
       
-      <a href="/" className="btn btn-secondary" style={{ 
-        marginTop: '2rem', 
-        display: 'flex', 
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '0.5rem',
-        textDecoration: 'none'
-      }}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="19" y1="12" x2="5" y2="12"></line>
-          <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
-        Volver al Inicio
-      </a>
     </div>
   );
 }

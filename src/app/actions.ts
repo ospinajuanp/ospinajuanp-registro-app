@@ -55,3 +55,18 @@ export async function getVisits(): Promise<VisitLog[]> {
     return [];
   }
 }
+
+export async function deleteAllVisits() {
+  try {
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    if (!adminPassword) {
+      return { success: false, error: "ADMIN_PASSWORD not set" };
+    }
+
+    await redis.del("visits");
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting visits from KV:", error);
+    return { success: false, error: "Failed to delete visits" };
+  }
+}
