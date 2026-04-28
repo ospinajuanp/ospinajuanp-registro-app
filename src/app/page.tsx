@@ -181,7 +181,7 @@ export default function Home() {
             <div className="delivery-info">
               <p>Estado de entrega</p>
               <span className={`badge ${((resultado["Recibe paquete"] || '').toLowerCase() === 'si') ? 'success' : 'pending'}`}>
-                {resultado["Recibe paquete"] === 'si' ? 'Se le entregará' : 'No recibe'}
+                {resultado["Recibe paquete"].toUpperCase() === 'SI' ? 'Se le entregará' : 'No recibe'}
               </span>
               
               <div style={{ marginTop: '1.2rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
