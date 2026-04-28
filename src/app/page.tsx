@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { logVisit } from "./actions";
+import { useCacheStore } from "./store";
 
 type Registro = {
   "Tipo de documento del niño"?: string;
@@ -24,8 +25,11 @@ export default function Home() {
   const [hasAcceptedPrivacy, setHasAcceptedPrivacy] = useState(false);
   const [showCaptureForm, setShowCaptureForm] = useState(true);
 
+  const { getCache, setCache, clearExpired } = useCacheStore();
+
   // Check if user already filled the form in this session
   useEffect(() => {
+    clearExpired(); // Limpiamos datos que ya tengan más de 5 días
     const saved = localStorage.getItem("visit-captured");
     if (saved === "true") {
       setShowCaptureForm(false);
@@ -53,6 +57,13 @@ export default function Home() {
       return;
     }
 
+    // Comprobar si existe en caché local (menor a 5 días)
+    const cachedData = getCache(id);
+    if (cachedData) {
+      setResultado(cachedData);
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await fetch("/api/buscar", {
@@ -71,6 +82,7 @@ export default function Home() {
       } else {
         const data = await res.json();
         setResultado(data);
+        setCache(id, data); // Guardamos la respuesta en la caché persistente
       }
     } catch (err) {
       setError("Error de conexión al servidor.");
