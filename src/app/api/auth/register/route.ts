@@ -12,26 +12,29 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Faltan campos obligatorios" }, { status: 400 });
     }
 
-    const userKey = `user:${email}`;
+    // 1. Obtener la colección de usuarios actual
+    const usersData = await redis.get<any[]>("users") || [];
 
-    // 1. Validar si el email ya existe
-    const exists = await redis.exists(userKey);
+    // 2. Validar si el email o usuario ya existe
+    const exists = usersData.some(u => u.email === email || u.username === username);
     if (exists) {
-      return NextResponse.json({ error: "El email ya está registrado" }, { status: 409 });
+      return NextResponse.json({ error: "El email o usuario ya está registrado" }, { status: 409 });
     }
 
-    // 2. Hashear la contraseña
+    // 3. Hashear la contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 3. Guardar en Redis como Hash
+    // 4. Agregar a la colección y guardar
     // Guardamos isAuthorized como false por defecto
-    await redis.hset(userKey, {
+    usersData.push({
       username,
       email,
       password: hashedPassword,
       isAuthorized: false,
       createdAt: new Date().toISOString()
     });
+
+    await redis.set("users", usersData);
 
     return NextResponse.json({ 
       success: true, 

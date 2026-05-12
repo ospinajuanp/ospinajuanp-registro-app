@@ -8,22 +8,24 @@ const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "fallback-
 
 export async function POST(req: Request) {
   try {
-    const { email, password } = await req.json();
+    const { identifier, password, rememberMe } = await req.json();
 
-    if (!email || !password) {
+    if (!identifier || !password) {
       return NextResponse.json({ error: "Faltan credenciales" }, { status: 400 });
     }
 
     let role = "user";
     let isAuthorized = false;
+    let emailForToken = identifier;
 
     // 1. Verificación de la contraseña "maestra" del .env
     if (password === process.env.ADMIN_PASSWORD) {
       role = "admin";
       isAuthorized = true; // Permiso garantizado por la contraseña
     } else {
-      // 2. Verificación estándar contra Upstash Redis
-      const user = await redis.hgetall(`user:${email}`);
+      // 2. Verificación estándar contra la colección 'users'
+      const usersData = await redis.get<any[]>("users") || [];
+      const user = usersData.find(u => u.email === identifier || u.username === identifier);
 
       if (!user || !user.password) {
         return NextResponse.json({ error: "Credenciales incorrectas" }, { status: 401 });
@@ -34,20 +36,24 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Credenciales incorrectas" }, { status: 401 });
       }
 
-      // Validamos cómo Upstash guardó el booleano (puede retornar "true" o true)
       isAuthorized = user.isAuthorized === true || user.isAuthorized === "true";
+      emailForToken = user.email; // Usar siempre el email interno para el JWT
     }
 
     // 3. Generar el JWT
-    const token = await new SignJWT({ email, role })
+    const expiration = rememberMe ? "30d" : "24h";
+    const token = await new SignJWT({ email: emailForToken, role })
       .setProtectedHeader({ alg: "HS256" })
-      .setExpirationTime("24h")
+      .setExpirationTime(expiration)
       .setIssuedAt()
       .sign(JWT_SECRET);
 
     const response = NextResponse.json({ success: true, isAuthorized });
 
     // 4. Guardar token en las cookies
+    // MaxAge in seconds: 30 days = 30 * 24 * 60 * 60 = 2592000
+    const maxAge = rememberMe ? 2592000 : undefined;
+    
     response.cookies.set({
       name: "auth-token",
       value: token,
@@ -55,6 +61,7 @@ export async function POST(req: Request) {
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
+      maxAge: maxAge,
     });
 
     return response;

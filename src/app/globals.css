@@ -306,3 +306,31 @@ p {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .main-container {
+    min-width: 100%;
+    margin: 1rem;
+    padding: 1.5rem 1rem;
+    border-radius: 16px;
+  }
+  
+  .input-field {
+    font-size: 1rem;
+    padding: 0.875rem 1rem;
+  }
+  
+  .btn {
+    font-size: 1rem;
+    padding: 0.875rem;
+  }
+  
+  .result-view {
+    width: 100%;
+  }
+  
+  h1 {
+    font-size: 1.8rem;
+  }
+}

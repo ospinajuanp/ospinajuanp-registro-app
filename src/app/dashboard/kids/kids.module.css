@@ -1,0 +1,426 @@
+/* ==============================
+   kids.module.css
+   Base de Datos: Niños — styles
+   ============================== */
+
+/* Page wrapper */
+.pageWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Toolbar row (buttons) */
+.toolbar {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Search row */
+.searchRow {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.searchInput {
+  flex: 1;
+  min-width: 220px;
+  padding: 0.9rem 1.1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.4);
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.searchInput:focus {
+  border-color: rgba(56, 189, 248, 0.5);
+}
+
+.searchInput::placeholder {
+  color: #64748b;
+}
+
+/* Buttons */
+.btnDownload {
+  background: rgba(34, 197, 94, 0.1);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  padding: 0.6rem 1.2rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.btnDownload:hover {
+  background: rgba(34, 197, 94, 0.2);
+}
+
+.btnDeleteSelected {
+  background: rgba(239, 68, 68, 0.8);
+  color: #fff;
+  border: none;
+  padding: 0.9rem 1.4rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.btnDeleteSelected:hover {
+  background: rgba(239, 68, 68, 1);
+}
+
+/* Delete step button */
+.btnDeleteStep {
+  padding: 0.6rem 1.2rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.btnCancelDelete {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 0.82rem;
+  text-decoration: underline;
+}
+
+.deleteGroup {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* Table container */
+.tableContainer {
+  background: rgba(30, 41, 59, 0.7);
+  border-radius: 20px;
+  overflow-x: auto;
+  width: 100%;
+  max-width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.tableThead tr {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tableTh {
+  padding: 1rem 1.2rem;
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.tableTh.checkCol {
+  width: 50px;
+}
+
+.tableTr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+  transition: background 0.15s;
+}
+
+.tableTr.selected {
+  background: rgba(56, 189, 248, 0.05);
+}
+
+.tableTd {
+  padding: 1rem 1.2rem;
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+.tableTd.bold {
+  font-weight: 600;
+}
+
+.tableTd.actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+}
+
+/* Badges */
+.badgeYes {
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  background: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+  white-space: nowrap;
+}
+
+.badgeNo {
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  white-space: nowrap;
+}
+
+/* Action buttons inside table */
+.btnEdit {
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+  border: none;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+.btnEdit:hover {
+  background: rgba(56, 189, 248, 0.35);
+}
+
+.btnDelete {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: none;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+.btnDelete:hover {
+  background: rgba(239, 68, 68, 0.35);
+}
+
+/* Empty state */
+.emptyState {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #94a3b8;
+}
+
+.emptyIcon {
+  display: block;
+  margin: 0 auto 1rem;
+  opacity: 0.5;
+}
+
+/* Loading */
+.loadingBox {
+  text-align: center;
+  padding: 3rem;
+  color: #94a3b8;
+}
+
+/* Overflow row */
+.overflowRow td {
+  padding: 1.2rem;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+/* ── Modal ── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modalBox {
+  background: #1e293b;
+  width: 100%;
+  max-width: 600px;
+  border-radius: 24px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modalTitle {
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+/* Form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formRow {
+  display: flex;
+  gap: 1rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.formLabel {
+  color: #94a3b8;
+  font-size: 0.88rem;
+  margin-bottom: 0.35rem;
+  font-weight: 500;
+}
+
+.formInput,
+.formSelect {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.5);
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+  color-scheme: dark;
+}
+
+.formInput:focus,
+.formSelect:focus {
+  border-color: rgba(56, 189, 248, 0.5);
+}
+
+.formInput:disabled {
+  background: rgba(0, 0, 0, 0.2);
+  cursor: not-allowed;
+  color: #64748b;
+}
+
+.formActions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.btnCancel {
+  flex: 1;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+.btnCancel:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btnSubmit {
+  flex: 1;
+  padding: 1rem;
+  background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: opacity 0.2s;
+}
+.btnSubmit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .toolbar > * {
+    width: 100%;
+    text-align: center;
+  }
+
+  .deleteGroup {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchRow {
+    flex-direction: column;
+  }
+
+  .searchInput {
+    min-width: 100%;
+  }
+
+  .btnDeleteSelected {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Hide less important columns on mobile */
+  .tableTh.hideMobile,
+  .tableTd.hideMobile {
+    display: none;
+  }
+
+  .tableTh,
+  .tableTd {
+    padding: 0.8rem 0.6rem;
+    font-size: 0.82rem;
+  }
+
+  .tableTd.actions {
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .formRow {
+    flex-direction: column;
+  }
+
+  .formActions {
+    flex-direction: column;
+  }
+
+  .modalBox {
+    padding: 1.25rem;
+    border-radius: 16px;
+  }
+}

@@ -1,15 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const savedIdentifier = localStorage.getItem("login-identifier");
+    const savedRememberMe = localStorage.getItem("login-remember-me") === "true";
+    
+    if (savedIdentifier) {
+      setIdentifier(savedIdentifier);
+      setRememberMe(savedRememberMe);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,9 +31,13 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // Si no pone email, mandamos "admin" para que no salte el error de 400
+        // Si no pone identificador, mandamos "admin" para que no salte el error de 400
         // y pueda entrar usando la contraseña maestra sola.
-        body: JSON.stringify({ email: email || "admin", password }),
+        body: JSON.stringify({ 
+          identifier: identifier || "admin", 
+          password,
+          rememberMe 
+        }),
       });
 
       const data = await res.json();
@@ -32,8 +47,16 @@ export default function LoginPage() {
         return;
       }
 
+      if (rememberMe) {
+        localStorage.setItem("login-identifier", identifier);
+        localStorage.setItem("login-remember-me", "true");
+      } else {
+        localStorage.removeItem("login-identifier");
+        localStorage.removeItem("login-remember-me");
+      }
+
       if (data.isAuthorized) {
-        router.push("/admin");
+        router.push("/dashboard");
       } else {
         router.push("/espera-aprobacion");
       }
@@ -55,9 +78,9 @@ export default function LoginPage() {
             <input
               type="text"
               className="input-field"
-              placeholder="Correo electrónico (o vacío si usas clave maestra)"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Correo electrónico o Usuario"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
               disabled={loading}
             />
             
@@ -70,6 +93,17 @@ export default function LoginPage() {
               disabled={loading}
               required
             />
+
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.9rem', color: 'var(--text-light)', marginTop: '0.5rem' }}>
+              <input 
+                type="checkbox" 
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                disabled={loading}
+                style={{ cursor: 'pointer' }}
+              />
+              Recordar información en este navegador
+            </label>
           </div>
 
           {error && <div className="error-message" style={{ marginTop: '1rem' }}>{error}</div>}

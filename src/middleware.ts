@@ -8,8 +8,9 @@ const redis = Redis.fromEnv();
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "fallback-secret-for-dev-only");
 
 export async function middleware(request: NextRequest) {
-  // Proteger solo las rutas que empiecen por /admin
-  if (request.nextUrl.pathname.startsWith('/admin')) {
+  const pathname = request.nextUrl.pathname;
+  // Proteger solo las rutas que empiecen por /dashboard o /admin
+  if (pathname.startsWith('/dashboard') || pathname.startsWith('/admin')) {
     const token = request.cookies.get('auth-token')?.value;
 
     if (!token) {
@@ -25,8 +26,10 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next();
       }
 
-      // 3. Consultar en tiempo real si el usuario está autorizado
-      const isAuthorized = await redis.hget(`user:${payload.email}`, 'isAuthorized');
+      // 3. Consultar en tiempo real si el usuario está autorizado desde la colección de usuarios
+      const usersData = await redis.get<any[]>("users") || [];
+      const user = usersData.find(u => u.email === payload.email);
+      const isAuthorized = user ? user.isAuthorized : false;
 
       // 4. Comprobar si NO está autorizado
       if (isAuthorized !== true && isAuthorized !== "true") {
@@ -47,5 +50,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/dashboard/:path*', '/admin/:path*'],
 };

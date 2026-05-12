@@ -61,7 +61,7 @@ export default function RegisterPage() {
               <input
                 type="text"
                 className="input-field"
-                placeholder="Nombre completo"
+                placeholder="Usuario"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 disabled={loading}
