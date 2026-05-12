@@ -110,7 +110,7 @@ export default function KidsManager() {
     const ws = XLSX.utils.json_to_sheet(kids);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "BaseDatosNinos");
-    XLSX.utils.writeFile(wb, `BaseDatosNinos_${new Date().toLocaleDateString()}.xlsx`);
+    XLSX.writeFile(wb, `BaseDatosNinos_${new Date().toLocaleDateString()}.xlsx`);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
