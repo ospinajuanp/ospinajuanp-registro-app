@@ -51,6 +51,9 @@ body {
     display: block;
     align-items: unset;
     justify-content: unset;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 

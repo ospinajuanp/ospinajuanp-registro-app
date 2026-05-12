@@ -106,11 +106,36 @@ export default function KidsManager() {
   };
 
   const handleDownloadExcel = () => {
-    if (kids.length === 0) { alert("No hay datos para descargar"); return; }
+    if (kids.length === 0) { 
+      alert("No hay datos para descargar"); 
+      return; 
+    }
+
+    // 1. Crear la hoja y el libro
     const ws = XLSX.utils.json_to_sheet(kids);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "BaseDatosNinos");
-    XLSX.writeFile(wb, `BaseDatosNinos_${new Date().toLocaleDateString()}.xlsx`);
+
+    // 2. Generar el contenido del archivo en memoria (Buffer)
+    // Usamos 'write' en lugar de 'writeFile' para evitar errores de sistema de archivos
+    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    
+    // 3. Crear un Blob con los datos
+    const data = new Blob([excelBuffer], { 
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+    });
+
+    // 4. Crear un enlace temporal y simular el clic para descargar
+    const url = window.URL.createObjectURL(data);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `BaseDatosNinos_${new Date().toLocaleDateString()}.xlsx`;
+    document.body.appendChild(link);
+    link.click();
+    
+    // 5. Limpieza
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
