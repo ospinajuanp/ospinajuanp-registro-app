@@ -144,65 +144,57 @@ export default function ImportPage() {
       </div>
 
       {/* ── Step 1: Mode selector ── */}
-      <p style={{ color: "#94a3b8", marginBottom: "1rem", fontWeight: 600 }}>
+      <p className={styles.stepLabel}>
         Paso 1 — Elige cómo quieres importar los datos:
       </p>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "2rem" }}>
+      <div className={styles.modeGrid}>
         {/* Merge */}
         <button
           onClick={() => selectMode("merge")}
+          className={styles.modeCard}
           style={{
             background: mode === "merge" ? "rgba(56,189,248,0.12)" : "rgba(30,41,59,0.5)",
             border: mode === "merge" ? "2px solid rgba(56,189,248,0.6)" : "2px solid rgba(255,255,255,0.06)",
-            borderRadius: "20px",
-            padding: "1.75rem",
-            cursor: "pointer",
-            textAlign: "left",
-            transition: "all 0.3s ease",
           }}
         >
-          <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>🔀</div>
-          <h3 style={{ color: mode === "merge" ? "#38bdf8" : "#f8fafc", fontSize: "1.1rem", marginBottom: "0.5rem" }}>
+          <span className={styles.modeEmoji}>🔀</span>
+          <h3 className={styles.modeCardTitle} style={{ color: mode === "merge" ? "#38bdf8" : "#f8fafc" }}>
             Agregar / Actualizar
           </h3>
-          <p style={{ color: "#94a3b8", fontSize: "0.88rem", lineHeight: "1.6", margin: 0 }}>
+          <p className={styles.modeCardDesc}>
             Los registros nuevos se <strong style={{ color: "#cbd5e1" }}>suman</strong> a los existentes.
             Si un niño ya está (mismo número de documento), sus datos se actualizan.
             El resto queda intacto. <strong style={{ color: "#cbd5e1" }}>✅ Opción segura.</strong>
           </p>
           {mode === "merge" && (
-            <div style={{ marginTop: "1rem", display: "inline-block", background: "rgba(56,189,248,0.2)", color: "#38bdf8", padding: "0.3rem 0.75rem", borderRadius: "8px", fontSize: "0.8rem", fontWeight: 700 }}>
+            <span className={styles.modeBadge} style={{ background: "rgba(56,189,248,0.2)", color: "#38bdf8" }}>
               ✓ Seleccionado
-            </div>
+            </span>
           )}
         </button>
 
         {/* Replace */}
         <button
           onClick={() => selectMode("replace")}
+          className={styles.modeCard}
           style={{
             background: mode === "replace" ? "rgba(239,68,68,0.1)" : "rgba(30,41,59,0.5)",
             border: mode === "replace" ? "2px solid rgba(239,68,68,0.5)" : "2px solid rgba(255,255,255,0.06)",
-            borderRadius: "20px",
-            padding: "1.75rem",
-            cursor: "pointer",
-            textAlign: "left",
-            transition: "all 0.3s ease",
           }}
         >
-          <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>♻️</div>
-          <h3 style={{ color: mode === "replace" ? "#f87171" : "#f8fafc", fontSize: "1.1rem", marginBottom: "0.5rem" }}>
+          <span className={styles.modeEmoji}>♻️</span>
+          <h3 className={styles.modeCardTitle} style={{ color: mode === "replace" ? "#f87171" : "#f8fafc" }}>
             Reemplazar Todo
           </h3>
-          <p style={{ color: "#94a3b8", fontSize: "0.88rem", lineHeight: "1.6", margin: 0 }}>
+          <p className={styles.modeCardDesc}>
             <strong style={{ color: "#fca5a5" }}>Se borran TODOS los datos actuales</strong> y se reemplazan
             solo por los del archivo. Úsalo cuando quieras empezar desde cero.{" "}
             <strong style={{ color: "#fca5a5" }}>⚠️ No se puede deshacer.</strong>
           </p>
           {mode === "replace" && (
-            <div style={{ marginTop: "1rem", display: "inline-block", background: "rgba(239,68,68,0.2)", color: "#f87171", padding: "0.3rem 0.75rem", borderRadius: "8px", fontSize: "0.8rem", fontWeight: 700 }}>
+            <span className={styles.modeBadge} style={{ background: "rgba(239,68,68,0.2)", color: "#f87171" }}>
               ✓ Seleccionado
-            </div>
+            </span>
           )}
         </button>
       </div>

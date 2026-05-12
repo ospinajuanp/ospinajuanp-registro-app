@@ -418,7 +418,7 @@
 /* ── Mode cards (Import) ── */
 .modeGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
   gap: 1rem;
   margin-bottom: 2rem;
 }
@@ -429,6 +429,7 @@
   cursor: pointer;
   text-align: left;
   transition: all 0.3s ease;
+  width: 100%;
 }
 
 .modeCardTitle {
@@ -451,6 +452,19 @@
   font-size: 0.8rem;
   font-weight: 700;
   margin-top: 1rem;
+}
+
+.modeEmoji {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.stepLabel {
+  color: #94a3b8;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
 /* ── Manage (Historial) table wrapper ── */
@@ -604,6 +618,38 @@
 
   .modeGrid {
     grid-template-columns: 1fr;
+  }
+
+  .modeCard {
+    padding: 1.25rem;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1rem;
+    text-align: left;
+  }
+
+  .modeEmoji {
+    font-size: 1.6rem;
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  .modeCardTitle {
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .modeCardDesc {
+    font-size: 0.83rem;
+    line-height: 1.5;
+  }
+
+  .modeBadge {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    margin-top: 0.5rem;
   }
 
   .fileInfoCard {
