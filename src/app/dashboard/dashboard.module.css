@@ -89,7 +89,9 @@
 /* ── Main Content ── */
 .mainContent {
   flex: 1;
+  width: 100%;
   min-width: 0;
+  box-sizing: border-box;
   padding: 2.5rem 3rem;
   overflow-y: auto;
   position: relative;
@@ -504,55 +506,80 @@
 
 /* ── Responsive ── */
 
-/* Mobile (≤ 980px): sidebar becomes horizontal top bar */
-@media (max-width: 980px) {
+/* Mobile (≤ 680px) */
+@media (max-width: 680px) {
   .dashboardLayout {
     flex-direction: column;
   }
 
+  /* Sidebar becomes a stacked block:
+     Brand centered on its own row, nav links in a centered row, logout below */
   .sidebar {
     width: 100%;
     min-width: 0;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 0.4rem;
+    gap: 0.75rem;
     border-right: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 0.75rem 1rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 1rem 1rem 0.85rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   }
 
   .brand {
     margin-bottom: 0;
-    font-size: 1rem;
-    margin-right: 0.5rem;
+    font-size: 1.15rem;
+    text-align: center;
   }
 
+  /* Nav links wrap in a centered row */
   .navLinks {
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 0.35rem;
-    flex: 1;
+    justify-content: center;
+    gap: 0.4rem;
+    width: 100%;
   }
 
   .navLink {
-    padding: 0.45rem 0.7rem;
-    font-size: 0.8rem;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.82rem;
     transform: none !important;
+    border-radius: 10px;
   }
 
+  /* Logout button full width on mobile */
+  .sidebar > div {
+    width: 100%;
+  }
+
+  .sidebar > div button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Main content */
   .mainContent {
     width: 100%;
     padding: 1.25rem 1rem;
   }
 
-  .headerTitle {
-    font-size: 1.4rem;
+  /* Section titles: centered on mobile */
+  .header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
   }
 
-  .header {
-    margin-bottom: 1.5rem;
+  .headerTitle {
+    font-size: 1.4rem;
+    text-align: center;
+  }
+
+  .headerSubtitle {
+    text-align: center;
   }
 
   .statsContainer {
@@ -591,9 +618,19 @@
   }
 }
 
+/* Extra small screens (≤ 480px) */
 @media (max-width: 480px) {
   .statsContainer {
     grid-template-columns: 1fr;
+  }
+
+  .navLink svg {
+    display: none;  /* hide icons on very small screens to save space */
+  }
+
+  .navLink {
+    font-size: 0.78rem;
+    padding: 0.45rem 0.65rem;
   }
 
   .mainContent {
@@ -601,6 +638,6 @@
   }
 
   .dropZone {
-    padding: 2.5rem 1rem;
+    padding: 2rem 1rem;
   }
 }

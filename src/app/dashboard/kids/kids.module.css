@@ -7,7 +7,9 @@
 .pageWrapper {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 /* Toolbar row (buttons) */

@@ -37,13 +37,21 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-  overflow-x: hidden;
-  /* background: var(--background-gradient); */
   color: var(--text-dark);
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+@media (min-width: 981px) {
+  html,
+  body {
+    width: 100%;
+    display: block;
+    align-items: unset;
+    justify-content: unset;
+  }
 }
 
 /* Typography */
