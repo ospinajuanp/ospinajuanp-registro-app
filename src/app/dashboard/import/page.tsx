@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import * as XLSX from "xlsx";
 import styles from "../dashboard.module.css";
 
@@ -27,7 +27,7 @@ export default function ImportPage() {
   const [mode, setMode] = useState<ImportMode>("merge");
   const [confirmReplace, setConfirmReplace] = useState(false);
 
-  const validateAndParseExcel = (f: File) => {
+  const validateAndParseExcel = useCallback((f: File) => {
     setError(null);
     setSuccess(null);
     setConfirmReplace(false);
@@ -56,6 +56,11 @@ export default function ImportPage() {
         }
 
         const rows = XLSX.utils.sheet_to_json(worksheet);
+        if (rows.length === 0) {
+          setError("El archivo no contiene registros válidos (solo encabezados).");
+          return;
+        }
+
         setParsedData(rows);
         setFile(f);
       } catch (err) {
@@ -64,24 +69,59 @@ export default function ImportPage() {
       }
     };
     reader.readAsBinaryString(f);
-  };
-
-  const onDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
   }, []);
 
-  const onDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-  }, []);
+  // ── Global drag & drop: capture file dropped anywhere on the page ──
+  useEffect(() => {
+    let dragCounter = 0;
 
-  const onDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile) validateAndParseExcel(droppedFile);
-  }, []);
+    const handleDragEnter = (e: DragEvent) => {
+      e.preventDefault();
+      dragCounter++;
+      setIsDragging(true);
+    };
+
+    const handleDragLeave = (e: DragEvent) => {
+      e.preventDefault();
+      dragCounter--;
+      if (dragCounter <= 0) {
+        dragCounter = 0;
+        setIsDragging(false);
+      }
+    };
+
+    const handleDragOver = (e: DragEvent) => {
+      e.preventDefault();
+    };
+
+    const handleDrop = (e: DragEvent) => {
+      e.preventDefault();
+      dragCounter = 0;
+      setIsDragging(false);
+
+      const droppedFile = e.dataTransfer?.files[0];
+      if (droppedFile) {
+        const ext = droppedFile.name.split(".").pop()?.toLowerCase();
+        if (ext === "xlsx" || ext === "xls" || ext === "csv") {
+          validateAndParseExcel(droppedFile);
+        } else {
+          setError("Formato no soportado. Solo se aceptan archivos .xlsx, .xls o .csv");
+        }
+      }
+    };
+
+    document.addEventListener("dragenter", handleDragEnter);
+    document.addEventListener("dragleave", handleDragLeave);
+    document.addEventListener("dragover", handleDragOver);
+    document.addEventListener("drop", handleDrop);
+
+    return () => {
+      document.removeEventListener("dragenter", handleDragEnter);
+      document.removeEventListener("dragleave", handleDragLeave);
+      document.removeEventListener("dragover", handleDragOver);
+      document.removeEventListener("drop", handleDrop);
+    };
+  }, [validateAndParseExcel]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -111,10 +151,12 @@ export default function ImportPage() {
 
       if (!response.ok) throw new Error(result.error || "Error al subir los datos");
 
+      const totalMsg = result.total ? ` (Total en BD: ${result.total})` : "";
+
       setSuccess(
         mode === "replace"
           ? `¡Éxito! La base de datos fue reemplazada con ${result.count} registros nuevos.`
-          : `¡Éxito! Se fusionaron ${result.count} registros con los datos existentes.`
+          : `¡Éxito! Se agregaron/actualizaron ${result.count} registros.${totalMsg}`
       );
       setFile(null);
       setParsedData(null);
@@ -134,6 +176,35 @@ export default function ImportPage() {
 
   return (
     <>
+      {/* Full-page drag overlay */}
+      {isDragging && (
+        <div style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 999,
+          background: "rgba(15, 23, 42, 0.85)",
+          backdropFilter: "blur(6px)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "1rem",
+          pointerEvents: "none",
+        }}>
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <p style={{ color: "#38bdf8", fontSize: "1.3rem", fontWeight: 700 }}>
+            Suelta el archivo aquí
+          </p>
+          <p style={{ color: "#94a3b8", fontSize: "0.9rem" }}>
+            .xlsx, .xls o .csv
+          </p>
+        </div>
+      )}
+
       <div className={styles.header}>
         <div>
           <h1 className={styles.headerTitle}>Importar Datos</h1>
@@ -199,15 +270,12 @@ export default function ImportPage() {
         </button>
       </div>
 
-      {/* ── Step 2: File drop ── */}
-      <p style={{ color: "#94a3b8", marginBottom: "1rem", fontWeight: 600 }}>
+      {/* ── Step 2: File drop zone ── */}
+      <p className={styles.stepLabel}>
         Paso 2 — Selecciona el archivo a importar:
       </p>
       <div
         className={`${styles.dropZone} ${isDragging ? styles.active : ""}`}
-        onDragOver={onDragOver}
-        onDragLeave={onDragLeave}
-        onDrop={onDrop}
         onClick={() => document.getElementById("fileUpload")?.click()}
       >
         <input
@@ -225,7 +293,9 @@ export default function ImportPage() {
           </svg>
         </div>
         <h3 className={styles.uploadText}>Haz clic o arrastra tu archivo aquí</h3>
-        <p className={styles.uploadSub}>Formatos soportados: .xlsx, .xls, .csv</p>
+        <p className={styles.uploadSub}>
+          También puedes soltar el archivo en <strong>cualquier parte</strong> de la página
+        </p>
       </div>
 
       {error && (
@@ -239,7 +309,7 @@ export default function ImportPage() {
       {/* ── Step 3: Review & confirm ── */}
       {file && parsedData && !error && (
         <>
-          <p style={{ color: "#94a3b8", margin: "1.5rem 0 1rem", fontWeight: 600 }}>
+          <p className={styles.stepLabel} style={{ marginTop: "1.5rem" }}>
             Paso 3 — Revisa y confirma la importación:
           </p>
           <div className={styles.fileInfoCard} style={{ flexDirection: "column", alignItems: "flex-start", gap: "1rem" }}>
