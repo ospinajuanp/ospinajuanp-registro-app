@@ -234,20 +234,21 @@ export default function KidsManager() {
           <table className={s.table}>
             <thead className={s.tableThead}>
               <tr>
-                <th className={`${s.tableTh} ${s.checkCol}`}>
+                <th className={`${s.tableTh} ${s.checkCol}`} scope="col">
                   <input
                     type="checkbox"
                     checked={filteredKids.length > 0 && selectedKids.length === filteredKids.length}
                     onChange={toggleSelectAll}
                     style={{ width: 18, height: 18, cursor: "pointer" }}
+                    aria-label="Seleccionar todos"
                   />
                 </th>
-                <th className={s.tableTh}>Documento</th>
-                <th className={s.tableTh}>Nombre Completo</th>
-                <th className={`${s.tableTh} ${s.hideMobile}`}>Sede</th>
-                <th className={`${s.tableTh} ${s.hideMobile}`}>Paquete</th>
-                <th className={s.tableTh}>Recibe</th>
-                <th className={s.tableTh}>Acciones</th>
+                <th className={s.tableTh} scope="col">Documento</th>
+                <th className={s.tableTh} scope="col">Nombre Completo</th>
+                <th className={`${s.tableTh} ${s.hideMobile}`} scope="col">Sede</th>
+                <th className={`${s.tableTh} ${s.hideMobile}`} scope="col">Paquete</th>
+                <th className={s.tableTh} scope="col">Recibe</th>
+                <th className={s.tableTh} scope="col">Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -257,7 +258,7 @@ export default function KidsManager() {
                 return (
                   <tr key={docId || i} className={`${s.tableTr} ${isSelected ? s.selected : ""}`}>
                     <td className={s.tableTd}>
-                      <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(docId)} style={{ width: 18, height: 18, cursor: "pointer" }} />
+                      <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(docId)} style={{ width: 18, height: 18, cursor: "pointer" }} aria-label={`Seleccionar ${kid["Nombre completo del niño"]}`} />
                     </td>
                     <td className={s.tableTd}>{kid["Tipo de documento del niño"]} {docId}</td>
                     <td className={`${s.tableTd} ${s.bold}`}>{kid["Nombre completo del niño"]}</td>
@@ -269,8 +270,8 @@ export default function KidsManager() {
                       </span>
                     </td>
                     <td className={`${s.tableTd} ${s.actions}`}>
-                      <button className={s.btnEdit} onClick={() => handleOpenEdit(kid)}>Editar</button>
-                      <button className={s.btnDelete} onClick={() => handleDelete(docId)}>Borrar</button>
+                      <button className={s.btnEdit} onClick={() => handleOpenEdit(kid)} aria-label={`Editar registro de ${kid["Nombre completo del niño"]}`}>Editar</button>
+                      <button className={s.btnDelete} onClick={() => handleDelete(docId)} aria-label={`Eliminar registro de ${kid["Nombre completo del niño"]}`}>Borrar</button>
                     </td>
                   </tr>
                 );

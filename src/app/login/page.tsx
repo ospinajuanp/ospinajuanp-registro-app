@@ -68,14 +68,16 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="main-container" style={{ backgroundImage: 'none', backgroundColor: 'var(--bg)' }}>
+    <main id="main-content" className="main-container" style={{ backgroundImage: 'none', backgroundColor: 'var(--bg)' }}>
       <div className="input-group">
         <h1>Iniciar Sesión</h1>
         <p>Ingresa para acceder al panel de administración.</p>
         
         <form onSubmit={handleSubmit} style={{ width: '100%', marginTop: '1.5rem' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <label htmlFor="identifier" className="visually-hidden">Correo electrónico o usuario</label>
             <input
+              id="identifier"
               type="text"
               className="input-field"
               placeholder="Correo electrónico o Usuario"
@@ -84,7 +86,9 @@ export default function LoginPage() {
               disabled={loading}
             />
             
+            <label htmlFor="password" className="visually-hidden">Contraseña</label>
             <input
+              id="password"
               type="password"
               className="input-field"
               placeholder="Contraseña"
@@ -92,6 +96,7 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
               required
+              aria-describedby={error ? "login-error" : undefined}
             />
 
             <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.9rem', color: 'var(--text-light)', marginTop: '0.5rem' }}>
@@ -106,10 +111,10 @@ export default function LoginPage() {
             </label>
           </div>
 
-          {error && <div className="error-message" style={{ marginTop: '1rem' }}>{error}</div>}
+          {error && <div id="login-error" className="error-message" style={{ marginTop: '1rem' }} role="alert">{error}</div>}
           
           <button type="submit" className="btn" disabled={loading} style={{ marginTop: '1.5rem', width: '100%' }}>
-            {loading ? <span className="loading-spinner" style={{ display: 'inline-block' }}></span> : "Entrar"}
+            {loading ? <span className="loading-spinner" style={{ display: 'inline-block' }} aria-label="Cargando..."></span> : "Entrar"}
           </button>
         </form>
 

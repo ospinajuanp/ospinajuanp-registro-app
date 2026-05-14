@@ -40,9 +40,13 @@ export async function POST(req: Request) {
       emailForToken = user.email; // Usar siempre el email interno para el JWT
     }
 
-    // 3. Generar el JWT
+    // 3. Generar el JWT con isAuthorized incluido
     const expiration = rememberMe ? "30d" : "24h";
-    const token = await new SignJWT({ email: emailForToken, role })
+    const token = await new SignJWT({ 
+      email: emailForToken, 
+      role,
+      isAuthorized 
+    })
       .setProtectedHeader({ alg: "HS256" })
       .setExpirationTime(expiration)
       .setIssuedAt()

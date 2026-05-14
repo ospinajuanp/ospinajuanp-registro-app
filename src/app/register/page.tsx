@@ -44,21 +44,23 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="main-container" style={{ backgroundImage: 'none', backgroundColor: 'var(--bg)' }}>
+    <main id="main-content" className="main-container" style={{ backgroundImage: 'none', backgroundColor: 'var(--bg)' }}>
       <div className="input-group">
         <h1>Registro</h1>
         <p>Crea una cuenta para solicitar acceso al panel.</p>
         
         {success ? (
           <div style={{ marginTop: '2rem', textAlign: 'center', padding: '2rem', background: '#e7f0ff', borderRadius: '12px', color: '#1b3db8' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✅</div>
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }} aria-hidden="true">✅</div>
             <h3>¡Registro exitoso!</h3>
             <p style={{ marginTop: '0.5rem' }}>Serás redirigido al login. Recuerda que un administrador debe aprobar tu cuenta para poder ingresar al panel.</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} style={{ width: '100%', marginTop: '1.5rem' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <label htmlFor="username" className="visually-hidden">Usuario</label>
               <input
+                id="username"
                 type="text"
                 className="input-field"
                 placeholder="Usuario"
@@ -68,7 +70,9 @@ export default function RegisterPage() {
                 required
               />
 
+              <label htmlFor="email" className="visually-hidden">Correo electrónico</label>
               <input
+                id="email"
                 type="email"
                 className="input-field"
                 placeholder="Correo electrónico"
@@ -78,7 +82,9 @@ export default function RegisterPage() {
                 required
               />
               
+              <label htmlFor="register-password" className="visually-hidden">Contraseña</label>
               <input
+                id="register-password"
                 type="password"
                 className="input-field"
                 placeholder="Contraseña"
@@ -87,13 +93,14 @@ export default function RegisterPage() {
                 disabled={loading}
                 required
                 minLength={6}
+                aria-describedby={error ? "register-error" : undefined}
               />
             </div>
 
-            {error && <div className="error-message" style={{ marginTop: '1rem' }}>{error}</div>}
+            {error && <div id="register-error" className="error-message" style={{ marginTop: '1rem' }} role="alert">{error}</div>}
             
             <button type="submit" className="btn" disabled={loading} style={{ marginTop: '1.5rem', width: '100%' }}>
-              {loading ? <span className="loading-spinner" style={{ display: 'inline-block' }}></span> : "Crear cuenta"}
+              {loading ? <span className="loading-spinner" style={{ display: 'inline-block' }} aria-label="Cargando..."></span> : "Crear cuenta"}
             </button>
           </form>
         )}

@@ -100,6 +100,7 @@ export default function Home() {
 
   return (
       <main 
+        id="main-content"
         className="main-container" 
         style={{ 
           backgroundColor: resultado ? 'var(--bg)' : 'transparent',
@@ -113,7 +114,9 @@ export default function Home() {
           {showCaptureForm ? (
             <div className="capture-form">
               <p>Por favor, regístrate para continuar.</p>
+              <label htmlFor="userName" className="visually-hidden">Tu nombre (opcional)</label>
               <input
+                id="userName"
                 type="text"
                 className="input-field"
                 placeholder="Tu Nombre (Opcional)"
@@ -142,19 +145,22 @@ export default function Home() {
             <form onSubmit={handleSubmit} style={{ width: '100%' }}>
               <p>Ingresa el número de documento del niño para buscar la información.</p>
               
+              <label htmlFor="doc-search" className="visually-hidden">Número de documento del niño</label>
               <input
+                id="doc-search"
                 type="text"
                 className="input-field"
                 placeholder="Ejemplo: 1001"
                 value={id}
                 onChange={(e) => setId(e.target.value)}
                 disabled={loading}
+                aria-describedby={error ? "search-error" : undefined}
               />
               
-              {error && <div className="error-message">{error}</div>}
+              {error && <div id="search-error" className="error-message" role="alert">{error}</div>}
               
               <button type="submit" className="btn" disabled={loading} style={{ marginTop: '1rem' }}>
-                {loading ? <span className="loading-spinner" ></span> : "Buscar"}
+                {loading ? <span className="loading-spinner" aria-label="Cargando..."></span> : "Buscar"}
               </button>
               
               <button 
