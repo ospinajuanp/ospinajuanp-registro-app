@@ -30,8 +30,11 @@ export default function Home() {
   // Check if user already filled the form in this session
   useEffect(() => {
     clearExpired(); // Limpiamos datos que ya tengan más de 5 días
-    const saved = localStorage.getItem("visit-captured");
-    if (saved === "true") {
+    const savedName = localStorage.getItem("user-name");
+    
+    // Mostrar formulario de búsqueda solo si hay un nombre almacenado
+    if (savedName && savedName.trim().length > 0) {
+      setUserName(savedName.trim());
       setShowCaptureForm(false);
     }
   }, []);
@@ -135,7 +138,12 @@ export default function Home() {
               <button 
                 type="button" 
                 className="btn" 
-                onClick={() => setShowCaptureForm(false)}
+                onClick={() => {
+                  if (userName.trim()) {
+                    localStorage.setItem("user-name", userName.trim());
+                  }
+                  setShowCaptureForm(false);
+                }}
                 style={{ marginTop: '1rem'}}
               >
                 Continuar a la búsqueda
