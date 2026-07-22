@@ -22,15 +22,15 @@ async function convert() {
   await workbook.xlsx.readFile(excelFilePath);
   const worksheet = workbook.worksheets[0];
 
-  const jsonData: Record<string, any>[] = [];
+  const jsonData: Record<string, unknown>[] = [];
   let headers: string[] = [];
 
   worksheet.eachRow((row, rowNumber) => {
     if (rowNumber === 1) {
-      headers = (row.values as any[]).map(v => v ? String(v) : '');
+      headers = (row.values as unknown[]).map(v => v ? String(v) : '');
     } else {
-      const rowData: Record<string, any> = {};
-      const values = row.values as any[];
+      const rowData: Record<string, unknown> = {};
+      const values = row.values as unknown[];
       
       headers.forEach((header, index) => {
         if (header) {

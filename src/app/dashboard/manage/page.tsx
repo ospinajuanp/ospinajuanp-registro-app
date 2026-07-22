@@ -35,7 +35,7 @@ export default async function ManagePage() {
               </tr>
             </thead>
             <tbody>
-              {visits.map((visit, i) => (
+              {visits.map((visit) => (
                 <tr key={visit.uniqueId}>
                   <td>{new Date(visit.timestamp).toLocaleString()}</td>
                   <td>

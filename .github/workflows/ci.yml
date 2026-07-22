@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  verify:
+    name: Lint · Test · Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test
+        env:
+          JWT_SECRET: test-jwt-secret-for-vitest-only-32bytes-long-pad
+          ADMIN_PASSWORD: master-pass-for-ci
+        run: pnpm test --run
+
+      - name: Coverage
+        env:
+          JWT_SECRET: test-jwt-secret-for-vitest-only-32bytes-long-pad
+          ADMIN_PASSWORD: master-pass-for-ci
+        run: pnpm test:coverage
+
+      - name: Build
+        env:
+          JWT_SECRET: test-jwt-secret-for-vitest-only-32bytes-long-pad
+          ADMIN_PASSWORD: master-pass-for-ci
+          KV_REST_API_URL: https://placeholder.upstash.io
+          KV_REST_API_TOKEN: placeholder-token
+        run: pnpm build

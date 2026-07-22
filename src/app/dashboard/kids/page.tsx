@@ -37,7 +37,7 @@ export default function KidsManager() {
     setLoading(false);
   };
 
-  useEffect(() => { loadKids(); }, []);
+  useEffect(() => { loadKids(); }, []); // eslint-disable-line react-hooks/set-state-in-effect
 
   const handleOpenAdd = () => {
     setEditingDocId(null);

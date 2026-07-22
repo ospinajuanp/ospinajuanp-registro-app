@@ -28,7 +28,7 @@ export default function CacheSettingsToggle() {
         body: JSON.stringify({ forceUpdate: newValue }),
       });
       setForceUpdate(newValue);
-    } catch (err) {
+    } catch {
       console.error("Failed to save setting");
     }
     setSaving(false);

@@ -31,7 +31,7 @@ describe("asAdminSession", () => {
   });
 
   it("returns null when isAuthorized is missing", () => {
-    const { isAuthorized: _isAuthorized, ...rest } = basePayload;
+    const rest: SessionJwtPayload = { email: basePayload.email, role: basePayload.role };
     expect(asAdminSession(rest)).toBeNull();
   });
 

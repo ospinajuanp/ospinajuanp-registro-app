@@ -1,26 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function LoginPage() {
-  const [identifier, setIdentifier] = useState("");
+  const [identifier, setIdentifier] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem("login-identifier") ?? "";
+  });
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  const [rememberMe, setRememberMe] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("login-remember-me") === "true";
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-
-  useEffect(() => {
-    const savedIdentifier = localStorage.getItem("login-identifier");
-    const savedRememberMe = localStorage.getItem("login-remember-me") === "true";
-    
-    if (savedIdentifier) {
-      setIdentifier(savedIdentifier);
-      setRememberMe(savedRememberMe);
-    }
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +56,7 @@ export default function LoginPage() {
       } else {
         router.push("/espera-aprobacion");
       }
-    } catch (err) {
+    } catch {
       setError("Error de conexión");
     } finally {
       setLoading(false);

@@ -12,23 +12,23 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resultado, setResultado] = useState<Registro | null>(null);
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState(() => {
+    if (typeof window === "undefined") return "";
+    const saved = localStorage.getItem("user-name");
+    return saved && saved.trim().length > 0 ? saved.trim() : "";
+  });
   const [hasAcceptedPrivacy, setHasAcceptedPrivacy] = useState(false);
-  const [showCaptureForm, setShowCaptureForm] = useState(true);
+  const [showCaptureForm, setShowCaptureForm] = useState(() => {
+    if (typeof window === "undefined") return true;
+    const saved = localStorage.getItem("user-name");
+    return !(saved && saved.trim().length > 0);
+  });
 
   const { getCache, setCache, clearExpired } = useCacheStore();
 
-  // Check if user already filled the form in this session
   useEffect(() => {
-    clearExpired(); // Limpiamos datos que ya tengan más de 5 días
-    const savedName = localStorage.getItem("user-name");
-    
-    // Mostrar formulario de búsqueda solo si hay un nombre almacenado
-    if (savedName && savedName.trim().length > 0) {
-      setUserName(savedName.trim());
-      setShowCaptureForm(false);
-    }
-  }, []);
+    clearExpired();
+  }, [clearExpired]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +59,7 @@ export default function Home() {
         const settings = await settingsRes.json();
         forceUpdate = settings.forceUpdate === true;
       }
-    } catch (err) {
+    } catch {
       console.warn("Could not fetch cache settings, using default behavior");
     }
 
@@ -92,7 +92,7 @@ export default function Home() {
         setResultado(data);
         setCache(id, data);
       }
-    } catch (err) {
+    } catch {
       setError("Error de conexión al servidor.");
       setResultado(null);
     } finally {

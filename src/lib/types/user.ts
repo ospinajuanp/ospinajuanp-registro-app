@@ -6,7 +6,7 @@ export interface User {
   createdAt: string;
 }
 
-export interface StoredUser extends User {}
+export type StoredUser = User;
 
 export interface JwtPayload {
   email: string;
