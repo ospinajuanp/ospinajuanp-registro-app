@@ -6,6 +6,7 @@ import dash from "../dashboard.module.css";
 import s from "./kids.module.css";
 import * as XLSX from "xlsx";
 import type { Kid } from "@/lib/types/kid";
+import Pagination from "@/components/Pagination";
 
 const defaultKid: Kid = {
   "Tipo de documento del niño": "RC",
@@ -28,6 +29,8 @@ export default function KidsManager() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedKids, setSelectedKids] = useState<string[]>([]);
   const [deleteStep, setDeleteStep] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
 
   const loadKids = async () => {
     setLoading(true);
@@ -147,10 +150,27 @@ export default function KidsManager() {
     k["Número de documento del niño"]?.includes(searchTerm)
   );
 
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCurrentPage(1);
+  }, [searchTerm]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredKids.length / pageSize));
+  const safePage = Math.min(currentPage, totalPages);
+  const paginatedKids = filteredKids.slice(
+    (safePage - 1) * pageSize,
+    safePage * pageSize,
+  );
+
+  const handlePageChange = (page: number, size: number) => {
+    setCurrentPage(page);
+    setPageSize(size);
+  };
+
   const toggleSelectAll = () => {
-    setSelectedKids(selectedKids.length === filteredKids.length
+    setSelectedKids(selectedKids.length === paginatedKids.length && paginatedKids.length > 0
       ? []
-      : filteredKids.map(k => k["Número de documento del niño"]).filter(Boolean)
+      : paginatedKids.map(k => k["Número de documento del niño"]).filter(Boolean)
     );
   };
 
@@ -227,7 +247,7 @@ export default function KidsManager() {
                 <th className={`${s.tableTh} ${s.checkCol}`} scope="col">
                   <input
                     type="checkbox"
-                    checked={filteredKids.length > 0 && selectedKids.length === filteredKids.length}
+                    checked={paginatedKids.length > 0 && selectedKids.length === paginatedKids.length}
                     onChange={toggleSelectAll}
                     style={{ width: 18, height: 18, cursor: "pointer" }}
                     aria-label="Seleccionar todos"
@@ -242,7 +262,7 @@ export default function KidsManager() {
               </tr>
             </thead>
             <tbody>
-              {filteredKids.slice(0, 100).map((kid, i) => {
+              {paginatedKids.map((kid, i) => {
                 const docId = kid["Número de documento del niño"];
                 const isSelected = selectedKids.includes(docId);
                 return (
@@ -266,13 +286,6 @@ export default function KidsManager() {
                   </tr>
                 );
               })}
-              {filteredKids.length > 100 && (
-                <tr className={s.overflowRow}>
-                  <td colSpan={7}>
-                    Mostrando los primeros 100 de {filteredKids.length} resultados. Usa la búsqueda para encontrar otros.
-                  </td>
-                </tr>
-              )}
               {filteredKids.length === 0 && (
                 <tr>
                   <td colSpan={7} className={s.emptyState}>
@@ -288,6 +301,15 @@ export default function KidsManager() {
             </tbody>
           </table>
         </div>
+      )}
+
+      {!loading && (
+        <Pagination
+          currentPage={safePage}
+          pageSize={pageSize}
+          totalItems={filteredKids.length}
+          onPageChange={handlePageChange}
+        />
       )}
 
       {/* Modal */}
