@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import * as XLSX from "xlsx";
 import styles from "../dashboard.module.css";
 import { REQUIRED_KID_COLUMNS } from "@/lib/types/kid";
+import TemplateDownloadButton from "./TemplateDownloadButton";
 
 const REQUIRED_COLUMNS: readonly string[] = REQUIRED_KID_COLUMNS;
 
@@ -263,9 +264,12 @@ export default function ImportPage() {
       </div>
 
       {/* ── Step 2: File drop zone ── */}
-      <p className={styles.stepLabel}>
-        Paso 2 — Selecciona el archivo a importar:
-      </p>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.75rem" }}>
+        <p className={styles.stepLabel} style={{ margin: 0 }}>
+          Paso 2 — Selecciona el archivo a importar:
+        </p>
+        <TemplateDownloadButton />
+      </div>
       <div
         className={`${styles.dropZone} ${isDragging ? styles.active : ""}`}
         onClick={() => document.getElementById("fileUpload")?.click()}
