@@ -3,17 +3,9 @@
 import { useState, useCallback, useEffect } from "react";
 import * as XLSX from "xlsx";
 import styles from "../dashboard.module.css";
+import { REQUIRED_KID_COLUMNS } from "@/lib/types/kid";
 
-const REQUIRED_COLUMNS = [
-  "Tipo de documento del niño",
-  "Número de documento del niño",
-  "Nombre completo del niño",
-  "Sede",
-  "Tipo de paquete",
-  "Recibe paquete",
-  "fecha",
-  "hora"
-];
+const REQUIRED_COLUMNS: readonly string[] = REQUIRED_KID_COLUMNS;
 
 type ImportMode = "merge" | "replace";
 
@@ -23,7 +15,7 @@ export default function ImportPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [parsedData, setParsedData] = useState<any[] | null>(null);
+  const [parsedData, setParsedData] = useState<Array<Record<string, unknown>> | null>(null);
   const [mode, setMode] = useState<ImportMode>("merge");
   const [confirmReplace, setConfirmReplace] = useState(false);
 
@@ -55,7 +47,7 @@ export default function ImportPage() {
           return;
         }
 
-        const rows = XLSX.utils.sheet_to_json(worksheet);
+        const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(worksheet);
         if (rows.length === 0) {
           setError("El archivo no contiene registros válidos (solo encabezados).");
           return;
@@ -161,8 +153,8 @@ export default function ImportPage() {
       setFile(null);
       setParsedData(null);
       setConfirmReplace(false);
-    } catch (err: any) {
-      setError(err.message || "Error de conexión al subir los datos");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error de conexión al subir los datos");
     } finally {
       setLoading(false);
     }

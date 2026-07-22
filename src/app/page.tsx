@@ -3,18 +3,9 @@
 import { useState, useEffect } from "react";
 import { logVisit } from "./actions";
 import { useCacheStore } from "./store";
+import type { Kid } from "@/lib/types/kid";
 
-type Registro = {
-  "Tipo de documento del niño"?: string;
-  "Número de documento del niño": string;
-  "Nombre completo del niño": string;
-  "Sede": string;
-  "Tipo de paquete": string;
-  "Recibe paquete": string;
-  "fecha": string;
-  "hora": string;
-  [key: string]: any;
-};
+type Registro = Kid;
 
 export default function Home() {
   const [id, setId] = useState("");
@@ -205,11 +196,11 @@ export default function Home() {
           <div className="result-card">
             <h3>{resultado["Nombre completo del niño"] || "Tu peque"}</h3>
             <p><strong>Sede:</strong> {resultado["Sede"] || "General"}</p>
-            
+
             <div className="delivery-info">
               <p>Estado de entrega</p>
               <span className={`badge ${((resultado["Recibe paquete"] || '').toLowerCase() === 'si') ? 'success' : 'pending'}`}>
-                {resultado["Recibe paquete"].toUpperCase() === 'SI' ? 'Se le entregará' : 'No recibe'}
+                {((resultado["Recibe paquete"] || '').toUpperCase() === 'SI') ? 'Se le entregará' : 'No recibe'}
               </span>
               
               <div style={{ marginTop: '1.2rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>

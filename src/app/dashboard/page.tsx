@@ -1,19 +1,16 @@
 import Link from "next/link";
 import styles from "./dashboard.module.css";
 import { getVisits } from "../actions";
-import { Redis } from '@upstash/redis';
+import { redis } from "@/lib/redis";
+import type { Kid } from "@/lib/types/kid";
 import CacheSettingsToggle from "./CacheSettingsToggle";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const redis = Redis.fromEnv();
-  
-  // Get dataKids length
-  const dataKids = await redis.get<any[]>("dataKids") || [];
+  const dataKids = await redis.get<Kid[]>("dataKids") ?? [];
   const kidsCount = dataKids.length;
-  
-  // Get visits length as another stat
+
   const visits = await getVisits();
   const visitsCount = visits.length;
 

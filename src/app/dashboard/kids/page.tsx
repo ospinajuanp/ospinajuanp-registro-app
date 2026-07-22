@@ -5,17 +5,7 @@ import { getKids, addKid, updateKid, deleteKid, deleteAllKids, deleteMultipleKid
 import dash from "../dashboard.module.css";
 import s from "./kids.module.css";
 import * as XLSX from "xlsx";
-
-type Kid = {
-  "Tipo de documento del niño"?: string;
-  "Número de documento del niño": string;
-  "Nombre completo del niño": string;
-  "Sede": string;
-  "Tipo de paquete": string;
-  "Recibe paquete": string;
-  "fecha": string;
-  "hora": string;
-};
+import type { Kid } from "@/lib/types/kid";
 
 const defaultKid: Kid = {
   "Tipo de documento del niño": "RC",

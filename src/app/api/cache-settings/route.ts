@@ -8,10 +8,11 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { forceUpdate } = await request.json();
+    const body: unknown = await request.json();
+    const forceUpdate = (body as Record<string, unknown>)?.forceUpdate === true;
     const result = await setCacheSettings(forceUpdate);
     return NextResponse.json(result);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ success: false, error: "Invalid request" }, { status: 400 });
   }
 }

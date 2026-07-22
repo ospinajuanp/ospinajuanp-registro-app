@@ -1,6 +1,6 @@
 "use client";
 
-import { VisitLog } from "../../actions";
+import type { VisitLog } from "@/lib/types/visit";
 import styles from "../dashboard.module.css";
 
 interface DownloadButtonProps {

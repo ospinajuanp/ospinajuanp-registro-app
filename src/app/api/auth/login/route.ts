@@ -1,63 +1,76 @@
 import { NextResponse } from "next/server";
-import { Redis } from "@upstash/redis";
+import { redis } from "@/lib/redis";
 import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
+import type { StoredUser } from "@/lib/types/user";
 
-const redis = Redis.fromEnv();
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "fallback-secret-for-dev-only");
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.JWT_SECRET ?? "fallback-secret-for-dev-only"
+);
+
+interface UserShape {
+  email: string;
+  isAuthorized: boolean | "true";
+  role: "admin" | "user";
+}
 
 export async function POST(req: Request) {
   try {
-    const { identifier, password, rememberMe } = await req.json();
+    const body: unknown = await req.json();
+    const payload = (body ?? {}) as Record<string, unknown>;
+    const identifier = typeof payload.identifier === "string" ? payload.identifier : "";
+    const password = typeof payload.password === "string" ? payload.password : "";
+    const rememberMe = payload.rememberMe === true;
 
     if (!identifier || !password) {
       return NextResponse.json({ error: "Faltan credenciales" }, { status: 400 });
     }
 
-    let role = "user";
-    let isAuthorized = false;
-    let emailForToken = identifier;
+    let user: UserShape | null = null;
 
-    // 1. Verificación de la contraseña "maestra" del .env
     if (password === process.env.ADMIN_PASSWORD) {
-      role = "admin";
-      isAuthorized = true; // Permiso garantizado por la contraseña
+      user = {
+        email: identifier || "admin",
+        isAuthorized: true,
+        role: "admin",
+      };
     } else {
-      // 2. Verificación estándar contra la colección 'users'
-      const usersData = await redis.get<any[]>("users") || [];
-      const user = usersData.find(u => u.email === identifier || u.username === identifier);
+      const usersData = await redis.get<StoredUser[]>("users") ?? [];
+      const found = usersData.find(
+        (u) => u.email === identifier || u.username === identifier
+      );
 
-      if (!user || !user.password) {
+      if (!found || !found.password) {
         return NextResponse.json({ error: "Credenciales incorrectas" }, { status: 401 });
       }
 
-      const isValidPassword = await bcrypt.compare(password, user.password as string);
+      const isValidPassword = await bcrypt.compare(password, found.password);
       if (!isValidPassword) {
         return NextResponse.json({ error: "Credenciales incorrectas" }, { status: 401 });
       }
 
-      isAuthorized = user.isAuthorized === true || user.isAuthorized === "true";
-      emailForToken = user.email; // Usar siempre el email interno para el JWT
+      user = {
+        email: found.email,
+        isAuthorized: found.isAuthorized === true || found.isAuthorized === "true",
+        role: "user",
+      };
     }
 
-    // 3. Generar el JWT con isAuthorized incluido
     const expiration = rememberMe ? "30d" : "24h";
-    const token = await new SignJWT({ 
-      email: emailForToken, 
-      role,
-      isAuthorized 
+    const token = await new SignJWT({
+      email: user.email,
+      role: user.role,
+      isAuthorized: user.isAuthorized,
     })
       .setProtectedHeader({ alg: "HS256" })
       .setExpirationTime(expiration)
       .setIssuedAt()
       .sign(JWT_SECRET);
 
-    const response = NextResponse.json({ success: true, isAuthorized });
+    const response = NextResponse.json({ success: true, isAuthorized: user.isAuthorized });
 
-    // 4. Guardar token en las cookies
-    // MaxAge in seconds: 30 days = 30 * 24 * 60 * 60 = 2592000
-    const maxAge = rememberMe ? 2592000 : undefined;
-    
+    const maxAge = rememberMe ? 30 * 24 * 60 * 60 : undefined;
+
     response.cookies.set({
       name: "auth-token",
       value: token,
@@ -65,7 +78,7 @@ export async function POST(req: Request) {
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
-      maxAge: maxAge,
+      ...(maxAge !== undefined ? { maxAge } : {}),
     });
 
     return response;
