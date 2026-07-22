@@ -8,31 +8,39 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "excel:create": "npx tsx scripts/createExcel.ts",
-    "excel:convert": "npx tsx scripts/excelToJson.ts",
-    "excel:sync": "npm run excel:create && npm run excel:convert"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "excel:create": "tsx scripts/createExcel.ts",
+    "excel:convert": "tsx scripts/excelToJson.ts",
+    "excel:sync": "pnpm excel:create && pnpm excel:convert"
   },
   "dependencies": {
-    "@upstash/redis": "latest",
+    "@upstash/redis": "1.38.0",
     "bcryptjs": "^3.0.3",
     "jose": "^6.2.3",
     "next": "16.2.4",
-    "react": "latest",
-    "react-dom": "latest",
-    "zustand": "latest",
-    "xlsx": "latest"
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "xlsx": "0.18.5",
+    "zod": "^3.23.8",
+    "zustand": "5.0.13"
   },
   "devDependencies": {
-    "@types/bcrypt": "^6.0.0",
-    "@types/node": "latest",
-    "@types/react": "latest",
-    "@types/react-dom": "latest",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.2.6",
+    "@types/react-dom": "^19.2.3",
+    "@vitest/ui": "^2.1.8",
     "babel-plugin-react-compiler": "latest",
     "eslint": "latest",
     "eslint-config-next": "latest",
     "exceljs": "latest",
-    "ts-node": "latest",
-    "typescript": "latest"
+    "happy-dom": "^15.11.7",
+    "tsx": "^4.19.2",
+    "typescript": "latest",
+    "vitest": "^2.1.8"
   },
   "pnpm": {
     "overrides": {
