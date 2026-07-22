@@ -24,6 +24,10 @@
 .DS_Store
 *.pem
 
+# generated artifacts (scripts)
+/out/
+datos*.xlsx
+
 # debug
 npm-debug.log*
 yarn-debug.log*

@@ -1,6 +1,8 @@
 import * as ExcelJS from 'exceljs';
 import * as path from 'path';
 
+const OUTPUT_DIR = path.join(process.cwd(), 'out');
+
 async function create() {
   const data = [
     {
@@ -43,7 +45,7 @@ async function create() {
     });
   }
 
-  const filePath = path.join(process.cwd(), 'datos.xlsx');
+  const filePath = path.join(OUTPUT_DIR, 'datos.xlsx');
   await workbook.xlsx.writeFile(filePath);
 
   console.log(`Excel file created at ${filePath}`);

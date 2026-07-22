@@ -2,6 +2,8 @@ import * as ExcelJS from 'exceljs';
 import * as path from 'path';
 import * as fs from 'fs';
 
+const OUTPUT_DIR = path.join(process.cwd(), 'out');
+
 /**
  * Normaliza el formato de hora a "h:mm a.m./p.m."
  */
@@ -40,11 +42,10 @@ function formatTime(value: any): string {
 
 async function convert() {
   const excelFilePath = path.join(process.cwd(), 'datos.xlsx');
-  const jsonFilePath = path.join(process.cwd(), 'src', 'data', 'registros.json');
+  const jsonFilePath = path.join(OUTPUT_DIR, 'registros.json');
 
-  const dir = path.dirname(jsonFilePath);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+  if (!fs.existsSync(OUTPUT_DIR)) {
+    fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   }
 
   const workbook = new ExcelJS.Workbook();
