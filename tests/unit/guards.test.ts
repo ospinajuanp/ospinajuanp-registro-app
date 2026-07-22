@@ -18,8 +18,12 @@ describe("asAdminSession", () => {
     });
   });
 
-  it("returns null when role is not admin", () => {
-    expect(asAdminSession({ ...basePayload, role: "user" })).toBeNull();
+  it("accepts any role when isAuthorized=true (aligned with middleware)", () => {
+    expect(asAdminSession({ ...basePayload, role: "user" })).toEqual({
+      email: "admin@example.com",
+      role: "admin",
+      isAuthorized: true,
+    });
   });
 
   it("returns null when isAuthorized is false", () => {

@@ -17,7 +17,6 @@ export type AuthorizationResult =
   | { ok: false; reason: "missing" | "invalid" | "insufficient"; status: 401 | 403 };
 
 export function asAdminSession(payload: SessionJwtPayload): AdminSession | null {
-  if (payload.role !== "admin") return null;
   const isAuthorized = payload.isAuthorized === true || payload.isAuthorized === "true";
   if (!isAuthorized) return null;
   if (typeof payload.email !== "string" || payload.email.length === 0) return null;
