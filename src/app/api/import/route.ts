@@ -3,8 +3,12 @@ import { redis } from "@/lib/redis";
 import type { Kid } from "@/lib/types/kid";
 import { importSchema } from "@/lib/schemas/kids";
 import { parseBody } from "@/lib/http/parseBody";
+import { requireAdmin } from "@/lib/auth/guards";
 
 export async function POST(request: Request) {
+  const guard = await requireAdmin();
+  if (!guard.ok) return NextResponse.json({ error: guard.reason }, { status: guard.status });
+
   const parsed = await parseBody(request, importSchema);
   if (!parsed.ok) return parsed.response;
 

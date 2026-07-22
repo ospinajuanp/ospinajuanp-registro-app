@@ -3,13 +3,24 @@
 import { revalidatePath } from "next/cache";
 import { redis } from "@/lib/redis";
 import type { Kid, KidUpdate } from "@/lib/types/kid";
+import { requireAdmin } from "@/lib/auth/guards";
+
+async function assertAdmin(): Promise<void> {
+  const guard = await requireAdmin();
+  if (!guard.ok) {
+    throw new Error("UNAUTHORIZED");
+  }
+}
 
 export async function getKids(): Promise<Kid[]> {
+  await assertAdmin();
   const data = await redis.get<Kid[]>("dataKids");
   return data ?? [];
 }
 
 export async function addKid(formData: Kid): Promise<{ success: boolean; error?: string }> {
+  await assertAdmin();
+
   const dataKids = await redis.get<Kid[]>("dataKids") ?? [];
 
   const exists = dataKids.find(
@@ -29,6 +40,8 @@ export async function updateKid(
   docId: string,
   formData: KidUpdate
 ): Promise<{ success: boolean; error?: string }> {
+  await assertAdmin();
+
   const dataKids = await redis.get<Kid[]>("dataKids") ?? [];
 
   const index = dataKids.findIndex(
@@ -46,6 +59,8 @@ export async function updateKid(
 }
 
 export async function deleteKid(docId: string): Promise<{ success: boolean; error?: string }> {
+  await assertAdmin();
+
   const dataKids = await redis.get<Kid[]>("dataKids") ?? [];
 
   const filtered = dataKids.filter(
@@ -58,6 +73,7 @@ export async function deleteKid(docId: string): Promise<{ success: boolean; erro
 }
 
 export async function deleteAllKids(): Promise<{ success: boolean }> {
+  await assertAdmin();
   await redis.set("dataKids", []);
   revalidatePath("/dashboard/kids");
   return { success: true };
@@ -66,6 +82,8 @@ export async function deleteAllKids(): Promise<{ success: boolean }> {
 export async function deleteMultipleKids(
   docIds: ReadonlyArray<string>
 ): Promise<{ success: boolean }> {
+  await assertAdmin();
+
   const dataKids = await redis.get<Kid[]>("dataKids") ?? [];
 
   const stringIds = docIds.map((id) => String(id));

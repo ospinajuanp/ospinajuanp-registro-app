@@ -2,6 +2,14 @@
 
 import { redis } from "@/lib/redis";
 import type { VisitLog, LogVisitInput, CacheSettings } from "@/lib/types/visit";
+import { requireAdmin } from "@/lib/auth/guards";
+
+async function assertAdmin(): Promise<void> {
+  const guard = await requireAdmin();
+  if (!guard.ok) {
+    throw new Error("UNAUTHORIZED");
+  }
+}
 
 export async function logVisit(data: LogVisitInput): Promise<{ success: boolean; error?: string }> {
   try {
@@ -23,6 +31,7 @@ export async function logVisit(data: LogVisitInput): Promise<{ success: boolean;
 }
 
 export async function getVisits(): Promise<VisitLog[]> {
+  await assertAdmin();
   try {
     const visits = await redis.lrange<string>("visits", 0, -1);
     return visits.map((v) => (typeof v === "string" ? JSON.parse(v) : v));
@@ -33,6 +42,7 @@ export async function getVisits(): Promise<VisitLog[]> {
 }
 
 export async function deleteAllVisits(): Promise<{ success: boolean; error?: string }> {
+  await assertAdmin();
   try {
     await redis.del("visits");
     return { success: true };
