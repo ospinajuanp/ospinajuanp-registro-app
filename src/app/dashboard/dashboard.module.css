@@ -436,6 +436,7 @@
   font-size: 1.1rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
+  display: block;
 }
 
 .modeCardDesc {
@@ -443,6 +444,7 @@
   font-size: 0.88rem;
   line-height: 1.6;
   margin: 0;
+  display: block;
 }
 
 .modeBadge {

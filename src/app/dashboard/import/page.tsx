@@ -165,6 +165,7 @@ export default function ImportPage() {
     setMode(m);
     setConfirmReplace(false);
     setError(null);
+    setSuccess(null);
   };
 
   return (
@@ -214,7 +215,9 @@ export default function ImportPage() {
       <div className={styles.modeGrid}>
         {/* Merge */}
         <button
+          type="button"
           onClick={() => selectMode("merge")}
+          aria-pressed={mode === "merge"}
           className={styles.modeCard}
           style={{
             background: mode === "merge" ? "rgba(56,189,248,0.12)" : "rgba(30,41,59,0.5)",
@@ -222,14 +225,14 @@ export default function ImportPage() {
           }}
         >
           <span className={styles.modeEmoji}>🔀</span>
-          <h3 className={styles.modeCardTitle} style={{ color: mode === "merge" ? "#38bdf8" : "#f8fafc" }}>
+          <span className={styles.modeCardTitle} style={{ color: mode === "merge" ? "#38bdf8" : "#f8fafc" }}>
             Agregar / Actualizar
-          </h3>
-          <p className={styles.modeCardDesc}>
+          </span>
+          <span className={styles.modeCardDesc}>
             Los registros nuevos se <strong style={{ color: "#cbd5e1" }}>suman</strong> a los existentes.
             Si un niño ya está (mismo número de documento), sus datos se actualizan.
             El resto queda intacto. <strong style={{ color: "#cbd5e1" }}>✅ Opción segura.</strong>
-          </p>
+          </span>
           {mode === "merge" && (
             <span className={styles.modeBadge} style={{ background: "rgba(56,189,248,0.2)", color: "#38bdf8" }}>
               ✓ Seleccionado
@@ -239,7 +242,9 @@ export default function ImportPage() {
 
         {/* Replace */}
         <button
+          type="button"
           onClick={() => selectMode("replace")}
+          aria-pressed={mode === "replace"}
           className={styles.modeCard}
           style={{
             background: mode === "replace" ? "rgba(239,68,68,0.1)" : "rgba(30,41,59,0.5)",
@@ -247,14 +252,14 @@ export default function ImportPage() {
           }}
         >
           <span className={styles.modeEmoji}>♻️</span>
-          <h3 className={styles.modeCardTitle} style={{ color: mode === "replace" ? "#f87171" : "#f8fafc" }}>
+          <span className={styles.modeCardTitle} style={{ color: mode === "replace" ? "#f87171" : "#f8fafc" }}>
             Reemplazar Todo
-          </h3>
-          <p className={styles.modeCardDesc}>
+          </span>
+          <span className={styles.modeCardDesc}>
             <strong style={{ color: "#fca5a5" }}>Se borran TODOS los datos actuales</strong> y se reemplazan
             solo por los del archivo. Úsalo cuando quieras empezar desde cero.{" "}
             <strong style={{ color: "#fca5a5" }}>⚠️ No se puede deshacer.</strong>
-          </p>
+          </span>
           {mode === "replace" && (
             <span className={styles.modeBadge} style={{ background: "rgba(239,68,68,0.2)", color: "#f87171" }}>
               ✓ Seleccionado
@@ -270,9 +275,9 @@ export default function ImportPage() {
         </p>
         <TemplateDownloadButton />
       </div>
-      <div
+      <label
+        htmlFor="fileUpload"
         className={`${styles.dropZone} ${isDragging ? styles.active : ""}`}
-        onClick={() => document.getElementById("fileUpload")?.click()}
       >
         <input
           type="file"
@@ -288,11 +293,11 @@ export default function ImportPage() {
             <line x1="12" y1="3" x2="12" y2="15"></line>
           </svg>
         </div>
-        <h3 className={styles.uploadText}>Haz clic o arrastra tu archivo aquí</h3>
-        <p className={styles.uploadSub}>
+        <span className={styles.uploadText}>Haz clic o arrastra tu archivo aquí</span>
+        <span className={styles.uploadSub} style={{ display: "block" }}>
           También puedes soltar el archivo en <strong>cualquier parte</strong> de la página
-        </p>
-      </div>
+        </span>
+      </label>
 
       {error && (
         <div className={styles.errorMessage}>
@@ -336,6 +341,7 @@ export default function ImportPage() {
             )}
 
             <button
+              type="button"
               className={styles.btnPrimary}
               onClick={handleUpload}
               disabled={loading || (mode === "replace" && !confirmReplace)}
