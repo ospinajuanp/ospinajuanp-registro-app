@@ -2,13 +2,26 @@ import { NextResponse } from "next/server";
 import { redis } from "@/lib/redis";
 import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
+import { timingSafeEqual } from "node:crypto";
 import type { StoredUser } from "@/lib/types/user";
 import { loginSchema } from "@/lib/schemas/auth";
 import { parseBody } from "@/lib/http/parseBody";
+import { JWT_SECRET, ADMIN_COOKIE_NAME } from "@/lib/auth/jwt";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET ?? "fallback-secret-for-dev-only"
-);
+function isAdminPassword(password: string): boolean {
+  const admin = process.env.ADMIN_PASSWORD ?? "";
+  if (!admin) return false;
+
+  const a = Buffer.from(password);
+  const b = Buffer.from(admin);
+  if (a.length !== b.length) return false;
+
+  try {
+    return timingSafeEqual(a, b);
+  } catch {
+    return false;
+  }
+}
 
 interface UserShape {
   email: string;
@@ -25,7 +38,7 @@ export async function POST(req: Request) {
   try {
     let user: UserShape;
 
-    if (password === process.env.ADMIN_PASSWORD) {
+    if (isAdminPassword(password)) {
       user = {
         email: identifier || "admin",
         isAuthorized: true,
@@ -69,7 +82,7 @@ export async function POST(req: Request) {
     const maxAge = rememberMe ? 30 * 24 * 60 * 60 : undefined;
 
     response.cookies.set({
-      name: "auth-token",
+      name: ADMIN_COOKIE_NAME,
       value: token,
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",

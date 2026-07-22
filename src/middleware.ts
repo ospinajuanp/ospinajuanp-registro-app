@@ -1,41 +1,33 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
-
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "fallback-secret-for-dev-only");
+import { JWT_SECRET, ADMIN_COOKIE_NAME, type SessionJwtPayload } from '@/lib/auth/jwt';
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-  // Proteger solo las rutas que empiecen por /dashboard o /admin
   if (pathname.startsWith('/dashboard') || pathname.startsWith('/admin')) {
-    const token = request.cookies.get('auth-token')?.value;
+    const token = request.cookies.get(ADMIN_COOKIE_NAME)?.value;
 
     if (!token) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
 
     try {
-      // 1. Verificar que el JWT es válido
-      const { payload } = await jwtVerify(token, JWT_SECRET);
-      
-      // 2. Si entró con la contraseña de entorno (rol admin), pasa directamente
+      const { payload } = await jwtVerify<SessionJwtPayload>(token, JWT_SECRET);
+
       if (payload.role === 'admin') {
         return NextResponse.next();
       }
 
-      // 3. Leer isAuthorized del JWT (ya no necesitamos consultar Redis)
-      const isAuthorized = payload.isAuthorized;
+      const isAuthorized = payload.isAuthorized === true || payload.isAuthorized === "true";
 
-      // 4. Comprobar si NO está autorizado
-      if (isAuthorized !== true && isAuthorized !== "true") {
+      if (!isAuthorized) {
         return NextResponse.redirect(new URL('/espera-aprobacion', request.url));
       }
 
-      // Si todo está bien, dejamos que la petición continúe
       return NextResponse.next();
     } catch (error) {
       console.error("JWT Verification failed:", error);
-      // Token expirado o inválido
       return NextResponse.redirect(new URL('/login', request.url));
     }
   }
