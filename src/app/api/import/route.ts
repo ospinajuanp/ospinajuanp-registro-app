@@ -1,25 +1,18 @@
 import { NextResponse } from "next/server";
 import { redis } from "@/lib/redis";
 import type { Kid } from "@/lib/types/kid";
+import { importSchema } from "@/lib/schemas/kids";
+import { parseBody } from "@/lib/http/parseBody";
 
 export async function POST(request: Request) {
+  const parsed = await parseBody(request, importSchema);
+  if (!parsed.ok) return parsed.response;
+
+  const { records, mode } = parsed.data;
+
+  console.log(`[Import] Mode: ${mode} | Records received: ${records.length}`);
+
   try {
-    const body: unknown = await request.json();
-    const records = Array.isArray((body as Record<string, unknown>)?.records)
-      ? ((body as Record<string, unknown>).records as Array<Record<string, unknown>>)
-      : null;
-    const rawMode = (body as Record<string, unknown>)?.mode;
-    const mode: "merge" | "replace" = rawMode === "replace" ? "replace" : "merge";
-
-    console.log(`[Import] Mode: ${mode} | Records received: ${records?.length ?? 0}`);
-
-    if (!records || records.length === 0) {
-      return NextResponse.json(
-        { error: "No se recibieron registros válidos." },
-        { status: 400 }
-      );
-    }
-
     const invalidRecords = records.filter((r) => !r["Número de documento del niño"]);
     if (invalidRecords.length > 0) {
       return NextResponse.json(
@@ -33,7 +26,7 @@ export async function POST(request: Request) {
     let updatedData: Kid[];
 
     if (mode === "replace") {
-      console.log(`[Import] REPLACE: Deleting all existing data, setting ${records.length} new records`);
+      console.log(`[Import] REPLACE: Replacing all data with ${records.length} records`);
       updatedData = records as unknown as Kid[];
     } else {
       const existingData = await redis.get<Kid[]>("dataKids") ?? [];

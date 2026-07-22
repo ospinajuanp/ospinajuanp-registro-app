@@ -3,6 +3,8 @@ import { redis } from "@/lib/redis";
 import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
 import type { StoredUser } from "@/lib/types/user";
+import { loginSchema } from "@/lib/schemas/auth";
+import { parseBody } from "@/lib/http/parseBody";
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET ?? "fallback-secret-for-dev-only"
@@ -10,23 +12,18 @@ const JWT_SECRET = new TextEncoder().encode(
 
 interface UserShape {
   email: string;
-  isAuthorized: boolean | "true";
+  isAuthorized: boolean;
   role: "admin" | "user";
 }
 
 export async function POST(req: Request) {
+  const parsed = await parseBody(req, loginSchema);
+  if (!parsed.ok) return parsed.response;
+
+  const { identifier, password, rememberMe } = parsed.data;
+
   try {
-    const body: unknown = await req.json();
-    const payload = (body ?? {}) as Record<string, unknown>;
-    const identifier = typeof payload.identifier === "string" ? payload.identifier : "";
-    const password = typeof payload.password === "string" ? payload.password : "";
-    const rememberMe = payload.rememberMe === true;
-
-    if (!identifier || !password) {
-      return NextResponse.json({ error: "Faltan credenciales" }, { status: 400 });
-    }
-
-    let user: UserShape | null = null;
+    let user: UserShape;
 
     if (password === process.env.ADMIN_PASSWORD) {
       user = {

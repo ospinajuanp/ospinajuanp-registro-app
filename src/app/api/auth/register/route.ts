@@ -2,19 +2,16 @@ import { NextResponse } from "next/server";
 import { redis } from "@/lib/redis";
 import bcrypt from "bcryptjs";
 import type { StoredUser } from "@/lib/types/user";
+import { registerSchema } from "@/lib/schemas/auth";
+import { parseBody } from "@/lib/http/parseBody";
 
 export async function POST(req: Request) {
+  const parsed = await parseBody(req, registerSchema);
+  if (!parsed.ok) return parsed.response;
+
+  const { username, email, password } = parsed.data;
+
   try {
-    const body: unknown = await req.json();
-    const payload = (body ?? {}) as Record<string, unknown>;
-    const username = typeof payload.username === "string" ? payload.username : "";
-    const email = typeof payload.email === "string" ? payload.email : "";
-    const password = typeof payload.password === "string" ? payload.password : "";
-
-    if (!username || !email || !password) {
-      return NextResponse.json({ error: "Faltan campos obligatorios" }, { status: 400 });
-    }
-
     const usersData = await redis.get<StoredUser[]>("users") ?? [];
 
     const exists = usersData.some((u) => u.email === email || u.username === username);

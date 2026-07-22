@@ -1,18 +1,16 @@
 import { NextResponse } from "next/server";
 import { redis } from "@/lib/redis";
 import type { Kid } from "@/lib/types/kid";
+import { buscarSchema } from "@/lib/schemas/kids";
+import { parseBody } from "@/lib/http/parseBody";
 
 export async function POST(request: Request) {
+  const parsed = await parseBody(request, buscarSchema);
+  if (!parsed.ok) return parsed.response;
+
+  const { id } = parsed.data;
+
   try {
-    const body: unknown = await request.json();
-    const id = typeof body === "object" && body !== null && "id" in body
-      ? String((body as Record<string, unknown>).id ?? "").trim()
-      : "";
-
-    if (!id) {
-      return NextResponse.json({ error: "ID es requerido" }, { status: 400 });
-    }
-
     const dataKids = await redis.get<Kid[]>("dataKids") ?? [];
 
     const record = dataKids.find((r) => {

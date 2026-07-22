@@ -1,18 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCacheSettings, setCacheSettings } from "@/app/actions";
+import { setCacheSettings } from "@/app/actions";
+import { cacheSettingsSchema } from "@/lib/schemas/kids";
+import { parseBody } from "@/lib/http/parseBody";
 
 export async function GET() {
+  const { getCacheSettings } = await import("@/app/actions");
   const settings = await getCacheSettings();
   return NextResponse.json(settings);
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const body: unknown = await request.json();
-    const forceUpdate = (body as Record<string, unknown>)?.forceUpdate === true;
-    const result = await setCacheSettings(forceUpdate);
-    return NextResponse.json(result);
-  } catch {
-    return NextResponse.json({ success: false, error: "Invalid request" }, { status: 400 });
-  }
+  const parsed = await parseBody(request, cacheSettingsSchema);
+  if (!parsed.ok) return parsed.response;
+
+  const { forceUpdate } = parsed.data;
+  const result = await setCacheSettings(forceUpdate);
+  return NextResponse.json(result);
 }
