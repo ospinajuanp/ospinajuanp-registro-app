@@ -2,6 +2,7 @@ import Link from "next/link";
 import styles from "./dashboard.module.css";
 import { getVisits } from "../actions";
 import { Redis } from '@upstash/redis';
+import CacheSettingsToggle from "./CacheSettingsToggle";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +25,8 @@ export default async function DashboardPage() {
           <p className={styles.headerSubtitle}>Métricas y accesos rápidos de tu aplicación</p>
         </div>
       </div>
+
+      <CacheSettingsToggle />
 
       <div className={styles.statsContainer}>
         <div className={styles.statCard}>

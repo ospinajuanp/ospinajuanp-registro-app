@@ -664,6 +664,77 @@
   }
 }
 
+/* ── Cache Toggle ── */
+.cacheToggle {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.cacheToggleInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.cacheToggleTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.cacheToggleDesc {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.toggleSwitch {
+  width: 56px;
+  height: 30px;
+  border-radius: 15px;
+  background: rgba(100, 116, 139, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.toggleSwitch:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.toggleSwitchActive {
+  background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.toggleKnob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.toggleSwitchActive .toggleKnob {
+  transform: translateX(26px);
+}
+
 /* Extra small screens (≤ 480px) */
 @media (max-width: 480px) {
   .statsContainer {

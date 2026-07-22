@@ -70,3 +70,27 @@ export async function deleteAllVisits() {
     return { success: false, error: "Failed to delete visits" };
   }
 }
+
+type CacheSettings = {
+  forceUpdate: boolean;
+};
+
+export async function getCacheSettings(): Promise<CacheSettings> {
+  try {
+    const settings = await redis.get<CacheSettings>("settings:cache");
+    return settings || { forceUpdate: false };
+  } catch (error) {
+    console.error("Error fetching cache settings:", error);
+    return { forceUpdate: false };
+  }
+}
+
+export async function setCacheSettings(forceUpdate: boolean): Promise<{ success: boolean }> {
+  try {
+    await redis.set("settings:cache", { forceUpdate });
+    return { success: true };
+  } catch (error) {
+    console.error("Error saving cache settings:", error);
+    return { success: false };
+  }
+}

@@ -60,11 +60,25 @@ export default function Home() {
       return;
     }
 
-    // Comprobar si existe en caché local (menor a 5 días)
-    const cachedData = getCache(id);
-    if (cachedData) {
-      setResultado(cachedData);
-      return;
+    // Obtener setting de cache
+    let forceUpdate = false;
+    try {
+      const settingsRes = await fetch("/api/cache-settings");
+      if (settingsRes.ok) {
+        const settings = await settingsRes.json();
+        forceUpdate = settings.forceUpdate === true;
+      }
+    } catch (err) {
+      console.warn("Could not fetch cache settings, using default behavior");
+    }
+
+    // Si forceUpdate es false, intentar usar cache primero
+    if (!forceUpdate) {
+      const cachedData = getCache(id);
+      if (cachedData) {
+        setResultado(cachedData);
+        return;
+      }
     }
 
     setLoading(true);
@@ -85,7 +99,7 @@ export default function Home() {
       } else {
         const data = await res.json();
         setResultado(data);
-        setCache(id, data); // Guardamos la respuesta en la caché persistente
+        setCache(id, data);
       }
     } catch (err) {
       setError("Error de conexión al servidor.");
