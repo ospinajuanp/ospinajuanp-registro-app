@@ -7,6 +7,7 @@ import s from "./kids.module.css";
 import * as XLSX from "xlsx";
 import type { Kid } from "@/lib/types/kid";
 import Pagination from "@/components/Pagination";
+import { kidMatchesSearch } from "@/lib/utils/kidSearch";
 
 const defaultKid: Kid = {
   "Tipo de documento del niño": "RC",
@@ -145,10 +146,7 @@ export default function KidsManager() {
     }
   };
 
-  const filteredKids = kids.filter(k =>
-    k["Nombre completo del niño"]?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    k["Número de documento del niño"]?.includes(searchTerm)
-  );
+  const filteredKids = kids.filter(k => kidMatchesSearch(k, searchTerm));
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
