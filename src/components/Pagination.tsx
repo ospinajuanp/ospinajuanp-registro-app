@@ -183,12 +183,25 @@ export default function Pagination({
           .pagination-size-label {
             display: none;
           }
+          /* Tighten so the row of controls (select + prev + pages + next)
+             fits on one line in a ~360px viewport. Touch height stays
+             >=44px; width shrinks to ~36px since the buttons only contain
+             a digit or an arrow. */
           .pagination-nav,
           .pagination-page {
-            min-width: 44px !important;
+            min-width: 36px !important;
             min-height: 44px !important;
-            font-size: 0.9rem !important;
+            font-size: 0.85rem !important;
+            padding: 0.4rem 0.35rem !important;
+          }
+          .pagination-nav {
+            font-size: 1.05rem !important;
             padding: 0.4rem 0.5rem !important;
+          }
+          /* Tighter gap between the controls so the row doesn't wrap */
+          nav[aria-label="Paginación"] > div {
+            gap: 0.25rem !important;
+            flex-wrap: nowrap !important;
           }
           .pagination-gap {
             display: none;
@@ -197,9 +210,10 @@ export default function Pagination({
           .pagination-nav-label {
             display: none;
           }
-          .pagination-nav {
-            font-size: 1.1rem !important;
-            padding: 0.4rem 0.65rem !important;
+          /* Make the select itself narrower */
+          .pagination-select {
+            padding: 0.4rem 0.4rem !important;
+            font-size: 0.8rem !important;
           }
         }
       `}</style>
