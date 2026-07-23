@@ -208,6 +208,9 @@ export default function ImportPage() {
             Sube archivos Excel o CSV para actualizar la base de datos de niños
           </p>
         </div>
+        <div className={styles.headerActions}>
+          <TemplateDownloadButton />
+        </div>
       </div>
 
       {/* ── Step 1: Mode selector ── */}
@@ -271,12 +274,9 @@ export default function ImportPage() {
       </div>
 
       {/* ── Step 2: File drop zone ── */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.75rem" }}>
-        <p className={styles.stepLabel} style={{ margin: 0 }}>
-          Paso 2 — Selecciona el archivo a importar:
-        </p>
-        <TemplateDownloadButton />
-      </div>
+      <p className={styles.stepLabel} style={{ marginTop: "0.5rem" }}>
+        Paso 2 — Selecciona el archivo a importar:
+      </p>
       <label
         htmlFor="fileUpload"
         className={`${styles.dropZone} ${isDragging ? styles.active : ""}`}
