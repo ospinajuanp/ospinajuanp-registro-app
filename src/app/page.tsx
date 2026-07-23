@@ -5,6 +5,12 @@ import Image from "next/image";
 import { logVisit } from "./actions";
 import { useCacheStore } from "./store";
 import type { Kid } from "@/lib/types/kid";
+import {
+  CAPTURE_FORM_ANIMATION_MS,
+  getLastSeenTimestamp,
+  isSameLocalDay,
+  setLastSeenTimestamp,
+} from "@/lib/utils/captureFormAnimation";
 
 type Registro = Kid;
 
@@ -16,18 +22,46 @@ export default function Home() {
   const [userName, setUserName] = useState("");
   const [hasAcceptedPrivacy, setHasAcceptedPrivacy] = useState(false);
   const [showCaptureForm, setShowCaptureForm] = useState(true);
+  // Capture-form slide-down animation state.
+  // `shouldAnimate`: true only on the first visit of the day.
+  // `hasAnimated`:   becomes true after the animation finishes (or
+  //                  immediately if the form shouldn't animate), so the
+  //                  wrapper stays in the --shown state on subsequent
+  //                  renders (e.g. when toggling back from the search
+  //                  form) without replaying the animation.
+  const [shouldAnimateCaptureForm, setShouldAnimateCaptureForm] = useState(false);
+  const [hasAnimatedCaptureForm, setHasAnimatedCaptureForm] = useState(false);
 
   const { getCache, setCache, clearExpired } = useCacheStore();
 
   useEffect(() => {
     clearExpired();
     if (typeof window === "undefined") return;
+
+    const now = Date.now();
+    const lastSeen = getLastSeenTimestamp();
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    if (lastSeen === null || !isSameLocalDay(lastSeen, now)) {
+      setLastSeenTimestamp(now);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setShouldAnimateCaptureForm(true);
+      timer = setTimeout(
+        () => setHasAnimatedCaptureForm(true),
+        CAPTURE_FORM_ANIMATION_MS,
+      );
+    } else {
+      setHasAnimatedCaptureForm(true);
+    }
+
     const saved = localStorage.getItem("user-name");
     if (saved && saved.trim().length > 0) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setUserName(saved.trim());
       setShowCaptureForm(false);
     }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [clearExpired]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -134,39 +168,50 @@ export default function Home() {
           <h1 className="welcome-heading">¡Bienvenido!</h1>
           
           {showCaptureForm ? (
-            <div className="capture-form">
-              <p>Por favor, regístrate para continuar.</p>
-              <label htmlFor="userName" className="visually-hidden">Tu nombre (opcional)</label>
-              <input
-                id="userName"
-                type="text"
-                className="input-field"
-                placeholder="Tu Nombre (Opcional)"
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-                style={{ marginBottom: '1rem' }}
-              />
-              <label className="privacy-checkbox">
+            <div
+              className={
+                hasAnimatedCaptureForm
+                  ? "capture-form-wrapper capture-form-wrapper--shown"
+                  : shouldAnimateCaptureForm
+                  ? "capture-form-wrapper capture-form-wrapper--animate"
+                  : "capture-form-wrapper"
+              }
+              aria-hidden={!hasAnimatedCaptureForm && shouldAnimateCaptureForm ? undefined : false}
+            >
+              <div className="capture-form">
+                <p>Por favor, regístrate para continuar.</p>
+                <label htmlFor="userName" className="visually-hidden">Tu nombre (opcional)</label>
                 <input
-                  type="checkbox"
-                  checked={hasAcceptedPrivacy}
-                  onChange={(e) => setHasAcceptedPrivacy(e.target.checked)}                  
+                  id="userName"
+                  type="text"
+                  className="input-field"
+                  placeholder="Tu Nombre (Opcional)"
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                  style={{ marginBottom: '1rem' }}
                 />
-                <span style={{ color: 'black' }}>Acepto la Política de Privacidad</span>
-              </label>
-              <button 
-                type="button" 
-                className="btn" 
-                onClick={() => {
-                  if (userName.trim()) {
-                    localStorage.setItem("user-name", userName.trim());
-                  }
-                  setShowCaptureForm(false);
-                }}
-                style={{ marginTop: '1rem'}}
-              >
-                Continuar a la búsqueda
-              </button>
+                <label className="privacy-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={hasAcceptedPrivacy}
+                    onChange={(e) => setHasAcceptedPrivacy(e.target.checked)}
+                  />
+                  <span style={{ color: 'black' }}>Acepto la Política de Privacidad</span>
+                </label>
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={() => {
+                    if (userName.trim()) {
+                      localStorage.setItem("user-name", userName.trim());
+                    }
+                    setShowCaptureForm(false);
+                  }}
+                  style={{ marginTop: '1rem'}}
+                >
+                  Continuar a la búsqueda
+                </button>
+              </div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} style={{ width: '100%' }}>
