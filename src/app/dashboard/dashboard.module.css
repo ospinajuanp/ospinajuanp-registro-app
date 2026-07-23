@@ -355,6 +355,13 @@
 
 /* ── Import / Drop Zone ── */
 .dropZone {
+  /* <label> is inline by default — that breaks the layout because the
+     drop zone contains block-level children (<div>, <span>) plus heavy
+     padding / border-radius. Force block + flex column so children stack
+     and center correctly. */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   border: 2px dashed rgba(56, 189, 248, 0.35);
   border-radius: 20px;
   padding: 3.5rem 2rem;
