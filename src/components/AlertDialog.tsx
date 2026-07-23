@@ -84,6 +84,16 @@ export default function AlertDialog({
       aria-labelledby={titleId}
       aria-describedby={messageId}
       style={{
+        /* Explicit centering so the dialog is always visually centered on
+           screen, regardless of the surrounding layout / scroll position.
+           <dialog> + showModal() centers natively via margin: auto, but
+           with width: 100% + max-width overrides it can drift on some
+           browsers — pinning with transform guarantees consistency. */
+        position: "fixed",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        margin: 0,
         padding: 0,
         border: "none",
         background: "transparent",

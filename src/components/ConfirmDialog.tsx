@@ -104,6 +104,13 @@ export default function ConfirmDialog({
       aria-labelledby={titleId}
       aria-describedby={messageId}
       style={{
+        /* Explicit centering so the dialog is always visually centered on
+           screen, regardless of the surrounding layout / scroll position. */
+        position: "fixed",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        margin: 0,
         padding: 0,
         border: "none",
         background: "transparent",
