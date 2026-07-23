@@ -144,12 +144,11 @@
 
 /* ── Main Content ── */
 .mainContent {
-  flex: 1;
-  width: 100%;
   min-width: 0;
   box-sizing: border-box;
-  /* Offset for the fixed sidebar on desktop. The sidebar is fixed at
-     260px wide; without this margin the mainContent would slide under it. */
+  /* No explicit width: block element auto-fills the remaining space,
+     which is (100vw - 260px sidebar). margin-left offsets for the
+     fixed sidebar so the content sits to the right of it. */
   margin-left: 260px;
   padding: 2.5rem 3rem;
   overflow-y: auto;
