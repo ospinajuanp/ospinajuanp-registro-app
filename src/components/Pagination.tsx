@@ -81,7 +81,8 @@ export default function Pagination({
         background: "rgba(30, 41, 59, 0.5)",
         border: "1px solid rgba(255, 255, 255, 0.05)",
         borderRadius: "12px",
-        marginTop: "0.75rem",
+        marginTop: "1rem",
+        marginBottom: "1.25rem",
       }}
     >
       <span
