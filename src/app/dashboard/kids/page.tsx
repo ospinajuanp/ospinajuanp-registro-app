@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Pencil, Trash2 } from "lucide-react";
 import { getKids, addKid, updateKid, deleteKid, deleteAllKids, deleteMultipleKids } from "../../actions/kids";
 import dash from "../dashboard.module.css";
 import s from "./kids.module.css";
@@ -290,8 +291,14 @@ export default function KidsManager() {
                       </span>
                     </td>
                     <td className={`${s.tableTd} ${s.actions}`}>
-                      <button className={s.btnEdit} onClick={() => handleOpenEdit(kid)} aria-label={`Editar registro de ${kid["Nombre completo del niño"]}`}>Editar</button>
-                      <button className={s.btnDelete} onClick={() => handleDelete(docId)} aria-label={`Eliminar registro de ${kid["Nombre completo del niño"]}`}>Borrar</button>
+                      <button className={s.btnEdit} onClick={() => handleOpenEdit(kid)} aria-label={`Editar registro de ${kid["Nombre completo del niño"]}`}>
+                        <Pencil size={14} aria-hidden />
+                        <span className={s.btnText}>Editar</span>
+                      </button>
+                      <button className={s.btnDelete} onClick={() => handleDelete(docId)} aria-label={`Eliminar registro de ${kid["Nombre completo del niño"]}`}>
+                        <Trash2 size={14} aria-hidden />
+                        <span className={s.btnText}>Borrar</span>
+                      </button>
                     </td>
                   </tr>
                 );

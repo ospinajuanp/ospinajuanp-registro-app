@@ -136,7 +136,7 @@ export default function Pagination({
           className="pagination-nav"
           style={navButtonStyle(isFirst)}
         >
-          ‹ {prevText}
+          ‹<span className="pagination-nav-label"> {prevText}</span>
         </button>
 
         {pageList.map((p, i) =>
@@ -172,7 +172,7 @@ export default function Pagination({
           className="pagination-nav"
           style={navButtonStyle(isLast)}
         >
-          {nextText} ›
+          <span className="pagination-nav-label">{nextText} </span>›
         </button>
       </div>
 
@@ -187,9 +187,18 @@ export default function Pagination({
             min-width: 44px !important;
             min-height: 44px !important;
             font-size: 0.9rem !important;
+            padding: 0.4rem 0.5rem !important;
           }
           .pagination-gap {
             display: none;
+          }
+          /* Hide full prev/next text labels on mobile, keep only the arrow */
+          .pagination-nav-label {
+            display: none;
+          }
+          .pagination-nav {
+            font-size: 1.1rem !important;
+            padding: 0.4rem 0.65rem !important;
           }
         }
       `}</style>

@@ -408,13 +408,76 @@
 
   .tableTh,
   .tableTd {
-    padding: 0.8rem 0.6rem;
-    font-size: 0.82rem;
+    padding: 0.55rem 0.4rem;
+    font-size: 0.78rem;
+  }
+
+  /* Truncate long names so the row doesn't overflow */
+  .tableTd.bold {
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Document column: allow line break for CC + number */
+  .tableTd {
+    word-break: break-word;
+  }
+
+  /* Sticky-right Acciones column — always visible while scrolling horizontally */
+  .tableTh:last-child,
+  .tableTd.actions {
+    position: sticky;
+    right: 0;
+    background: rgba(30, 41, 59, 0.96);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: -8px 0 12px rgba(0, 0, 0, 0.35);
+    z-index: 1;
+  }
+
+  .tableThead tr .tableTh:last-child {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
   }
 
   .tableTd.actions {
-    flex-direction: column;
-    gap: 0.3rem;
+    flex-direction: row;
+    gap: 0.4rem;
+    justify-content: center;
+  }
+
+  /* Action buttons — icons only on mobile, compact */
+  .btnEdit,
+  .btnDelete {
+    padding: 0.4rem;
+    min-width: 36px;
+    min-height: 36px;
+  }
+
+  .btnText {
+    display: none;
+  }
+
+  /* Sticky checkbox column on the left for scroll context */
+  .tableTh.checkCol,
+  .tableTd:first-child {
+    position: sticky;
+    left: 0;
+    background: rgba(30, 41, 59, 0.96);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 1;
+  }
+
+  .tableThead tr .tableTh.checkCol {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .tableTd:first-child {
+    box-shadow: 8px 0 12px rgba(0, 0, 0, 0.35);
   }
 
   .formRow {
