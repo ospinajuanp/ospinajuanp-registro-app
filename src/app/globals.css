@@ -331,21 +331,27 @@ p {
     padding: 1.5rem 1rem;
     border-radius: 16px;
   }
-  
+
+  .input-group {
+    margin-top: 2rem;
+  }
+
   .input-field {
     font-size: 1rem;
     padding: 0.875rem 1rem;
+    min-height: 44px;
   }
-  
+
   .btn {
     font-size: 1rem;
     padding: 0.875rem;
+    min-height: 48px;
   }
-  
+
   .result-view {
     width: 100%;
   }
-  
+
   h1 {
     font-size: 1.8rem;
   }

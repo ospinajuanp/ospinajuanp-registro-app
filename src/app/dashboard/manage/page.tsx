@@ -18,7 +18,7 @@ export default async function ManagePage() {
             Registro total de búsquedas en el sistema · {visits.length} entradas
           </p>
         </div>
-        <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", flexWrap: "wrap" }}>
+        <div className={styles.headerActions}>
           <DownloadButton data={visits} />
           <DeleteDataButton count={visits.length} />
         </div>

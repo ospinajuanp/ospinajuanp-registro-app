@@ -76,7 +76,7 @@ export default function Pagination({
         flexWrap: "wrap",
         alignItems: "center",
         justifyContent: "space-between",
-        gap: "1rem",
+        gap: "0.75rem",
         padding: "0.875rem 1rem",
         background: "rgba(30, 41, 59, 0.5)",
         border: "1px solid rgba(255, 255, 255, 0.05)",
@@ -84,7 +84,14 @@ export default function Pagination({
         marginTop: "0.75rem",
       }}
     >
-      <span style={{ color: "#94a3b8", fontSize: "0.88rem", fontWeight: 500 }}>
+      <span
+        style={{
+          color: "#94a3b8",
+          fontSize: "0.88rem",
+          fontWeight: 500,
+        }}
+        className="pagination-status"
+      >
         {showingText} <strong style={{ color: "#f8fafc" }}>{start}-{end}</strong> de{" "}
         <strong style={{ color: "#f8fafc" }}>{totalItems}</strong>
       </span>
@@ -92,6 +99,7 @@ export default function Pagination({
       <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
         <label
           htmlFor={selectId}
+          className="pagination-size-label"
           style={{ color: "#94a3b8", fontSize: "0.85rem", fontWeight: 500 }}
         >
           {pageSizeText}
@@ -101,13 +109,15 @@ export default function Pagination({
           value={pageSize}
           onChange={(e) => changeSize(Number(e.target.value))}
           disabled={isEmpty}
+          className="pagination-select"
           style={{
             background: "rgba(15, 23, 42, 0.6)",
             color: "#f8fafc",
             border: "1px solid rgba(255, 255, 255, 0.1)",
             borderRadius: "8px",
-            padding: "0.35rem 0.6rem",
+            padding: "0.5rem 0.6rem",
             fontSize: "0.85rem",
+            minHeight: "44px",
             cursor: isEmpty ? "not-allowed" : "pointer",
           }}
         >
@@ -123,6 +133,7 @@ export default function Pagination({
           onClick={() => goTo(safePage - 1)}
           disabled={isFirst}
           aria-label="Página anterior"
+          className="pagination-nav"
           style={navButtonStyle(isFirst)}
         >
           ‹ {prevText}
@@ -133,6 +144,7 @@ export default function Pagination({
             <span
               key={`gap-${i}`}
               aria-hidden="true"
+              className="pagination-gap"
               style={{ color: "#64748b", padding: "0 0.25rem" }}
             >
               …
@@ -144,6 +156,7 @@ export default function Pagination({
               onClick={() => goTo(p)}
               aria-label={`Ir a página ${p}`}
               aria-current={p === safePage ? "page" : undefined}
+              className="pagination-page"
               style={pageButtonStyle(p === safePage)}
             >
               {p}
@@ -156,11 +169,30 @@ export default function Pagination({
           onClick={() => goTo(safePage + 1)}
           disabled={isLast}
           aria-label="Página siguiente"
+          className="pagination-nav"
           style={navButtonStyle(isLast)}
         >
           {nextText} ›
         </button>
       </div>
+
+      <style>{`
+        @media (max-width: 480px) {
+          .pagination-status,
+          .pagination-size-label {
+            display: none;
+          }
+          .pagination-nav,
+          .pagination-page {
+            min-width: 44px !important;
+            min-height: 44px !important;
+            font-size: 0.9rem !important;
+          }
+          .pagination-gap {
+            display: none;
+          }
+        }
+      `}</style>
     </nav>
   );
 }
@@ -171,11 +203,12 @@ function navButtonStyle(disabled: boolean): React.CSSProperties {
     color: disabled ? "#475569" : "#f8fafc",
     border: "1px solid rgba(255, 255, 255, 0.1)",
     borderRadius: "8px",
-    padding: "0.4rem 0.75rem",
+    padding: "0.5rem 0.75rem",
     fontSize: "0.85rem",
     fontWeight: 600,
     cursor: disabled ? "not-allowed" : "pointer",
     opacity: disabled ? 0.5 : 1,
+    minHeight: "44px",
   };
 }
 
@@ -187,10 +220,11 @@ function pageButtonStyle(active: boolean): React.CSSProperties {
       color: "#fff",
       border: "none",
       borderRadius: "8px",
-      padding: "0.4rem 0.5rem",
+      padding: "0.5rem 0.5rem",
       fontSize: "0.85rem",
       fontWeight: 700,
       cursor: "default",
+      minHeight: "44px",
     };
   }
   return {
@@ -199,9 +233,10 @@ function pageButtonStyle(active: boolean): React.CSSProperties {
     color: "#f8fafc",
     border: "1px solid rgba(255, 255, 255, 0.1)",
     borderRadius: "8px",
-    padding: "0.4rem 0.5rem",
+    padding: "0.5rem 0.5rem",
     fontSize: "0.85rem",
     fontWeight: 600,
     cursor: "pointer",
+    minHeight: "44px",
   };
 }

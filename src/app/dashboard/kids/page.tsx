@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { getKids, addKid, updateKid, deleteKid, deleteAllKids, deleteMultipleKids } from "../../actions/kids";
 import dash from "../dashboard.module.css";
 import s from "./kids.module.css";
-import * as XLSX from "xlsx";
 import type { Kid } from "@/lib/types/kid";
 import Pagination from "@/components/Pagination";
 import { kidMatchesSearch } from "@/lib/utils/kidSearch";
@@ -99,11 +98,14 @@ export default function KidsManager() {
     else setLoading(false);
   };
 
-  const handleDownloadExcel = () => {
-    if (kids.length === 0) { 
-      alert("No hay datos para descargar"); 
-      return; 
+  const handleDownloadExcel = async () => {
+    if (kids.length === 0) {
+      alert("No hay datos para descargar");
+      return;
     }
+
+    // Lazy-load XLSX (~700 KB) only when the user actually exports.
+    const XLSX = await import("xlsx");
 
     // 1. Crear la hoja y el libro
     const ws = XLSX.utils.json_to_sheet(kids);
@@ -113,10 +115,10 @@ export default function KidsManager() {
     // 2. Generar el contenido del archivo en memoria (Buffer)
     // Usamos 'write' en lugar de 'writeFile' para evitar errores de sistema de archivos
     const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    
+
     // 3. Crear un Blob con los datos
-    const data = new Blob([excelBuffer], { 
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+    const data = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     });
 
     // 4. Crear un enlace temporal y simular el clic para descargar
@@ -126,7 +128,7 @@ export default function KidsManager() {
     link.download = `BaseDatosNinos_${new Date().toLocaleDateString()}.xlsx`;
     document.body.appendChild(link);
     link.click();
-    
+
     // 5. Limpieza
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);

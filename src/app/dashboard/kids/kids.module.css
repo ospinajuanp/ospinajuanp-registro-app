@@ -194,12 +194,13 @@
   background: rgba(56, 189, 248, 0.2);
   color: #38bdf8;
   border: none;
-  padding: 0.45rem 0.9rem;
+  padding: 0.5rem 0.9rem;
   border-radius: 8px;
   cursor: pointer;
   font-size: 0.85rem;
   transition: background 0.2s;
   white-space: nowrap;
+  min-height: 36px;
 }
 .btnEdit:hover {
   background: rgba(56, 189, 248, 0.35);
@@ -209,12 +210,13 @@
   background: rgba(239, 68, 68, 0.2);
   color: #f87171;
   border: none;
-  padding: 0.45rem 0.9rem;
+  padding: 0.5rem 0.9rem;
   border-radius: 8px;
   cursor: pointer;
   font-size: 0.85rem;
   transition: background 0.2s;
   white-space: nowrap;
+  min-height: 36px;
 }
 .btnDelete:hover {
   background: rgba(239, 68, 68, 0.35);

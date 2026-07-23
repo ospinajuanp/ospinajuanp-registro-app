@@ -1,6 +1,6 @@
 "use client";
 
-import * as XLSX from "xlsx";
+import { Download } from "lucide-react";
 import { REQUIRED_KID_COLUMNS } from "@/lib/types/kid";
 
 const EXAMPLE_ROW: ReadonlyArray<string> = [
@@ -15,7 +15,8 @@ const EXAMPLE_ROW: ReadonlyArray<string> = [
 ];
 
 export default function TemplateDownloadButton() {
-  const handleDownload = () => {
+  const handleDownload = async () => {
+    const XLSX = await import("xlsx");
     const worksheet = XLSX.utils.aoa_to_sheet([
       REQUIRED_KID_COLUMNS as unknown as string[],
       EXAMPLE_ROW as unknown as string[],
@@ -44,23 +45,10 @@ export default function TemplateDownloadButton() {
         cursor: "pointer",
         transition: "all 0.2s ease",
         whiteSpace: "nowrap",
+        minHeight: "44px",
       }}
     >
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4" />
-        <polyline points="7 10 12 15 17 10" />
-        <line x1="12" y1="15" x2="12" y2="3" />
-      </svg>
+      <Download size={18} aria-hidden />
       Descargar plantilla (.xlsx)
     </button>
   );

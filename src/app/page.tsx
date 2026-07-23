@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { logVisit } from "./actions";
 import { useCacheStore } from "./store";
 import type { Kid } from "@/lib/types/kid";
@@ -12,22 +13,21 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resultado, setResultado] = useState<Registro | null>(null);
-  const [userName, setUserName] = useState(() => {
-    if (typeof window === "undefined") return "";
-    const saved = localStorage.getItem("user-name");
-    return saved && saved.trim().length > 0 ? saved.trim() : "";
-  });
+  const [userName, setUserName] = useState("");
   const [hasAcceptedPrivacy, setHasAcceptedPrivacy] = useState(false);
-  const [showCaptureForm, setShowCaptureForm] = useState(() => {
-    if (typeof window === "undefined") return true;
-    const saved = localStorage.getItem("user-name");
-    return !(saved && saved.trim().length > 0);
-  });
+  const [showCaptureForm, setShowCaptureForm] = useState(true);
 
   const { getCache, setCache, clearExpired } = useCacheStore();
 
   useEffect(() => {
     clearExpired();
+    if (typeof window === "undefined") return;
+    const saved = localStorage.getItem("user-name");
+    if (saved && saved.trim().length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setUserName(saved.trim());
+      setShowCaptureForm(false);
+    }
   }, [clearExpired]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -107,14 +107,27 @@ export default function Home() {
   };
 
   return (
-      <main 
+      <main
         id="main-content"
-        className="main-container" 
-        style={{ 
+        className="main-container"
+        style={{
           backgroundColor: resultado ? 'var(--bg)' : 'transparent',
-          backgroundImage: !resultado ? 'url(/buen-comienzo.jpg)' : 'none',
+          position: "relative",
+          overflow: "hidden",
         }}
       >
+        {!resultado && (
+          <Image
+            src="/buen-comienzo.jpg"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            quality={70}
+            style={{ objectFit: "cover", zIndex: -1 }}
+            aria-hidden
+          />
+        )}
       {!resultado ? (
         <div className="input-group">
           <h1>¡Bienvenido!</h1>
@@ -168,6 +181,9 @@ export default function Home() {
                 onChange={(e) => setId(e.target.value)}
                 disabled={loading}
                 aria-describedby={error ? "search-error" : undefined}
+                aria-invalid={!!error}
+                inputMode="numeric"
+                autoComplete="off"
               />
               
               {error && <div id="search-error" className="error-message" role="alert">{error}</div>}
@@ -189,20 +205,20 @@ export default function Home() {
         </div>
       ) : (
         <div className="result-view">
-          {((resultado["Recibe paquete"] || '').toLowerCase() === "si") && (
+          {(String(resultado["Recibe paquete"] ?? "").toLowerCase() === "si") && (
             <div className="icon-bounce">🎉</div>
           )}
-          
+
           <div className="result-card">
             <h3>{resultado["Nombre completo del niño"] || "Tu peque"}</h3>
             <p><strong>Sede:</strong> {resultado["Sede"] || "General"}</p>
 
             <div className="delivery-info">
               <p>Estado de entrega</p>
-              <span className={`badge ${((resultado["Recibe paquete"] || '').toLowerCase() === 'si') ? 'success' : 'pending'}`}>
-                {((resultado["Recibe paquete"] || '').toUpperCase() === 'SI') ? 'Se le entregará' : 'No recibe'}
+              <span className={`badge ${String(resultado["Recibe paquete"] ?? "").toLowerCase() === 'si' ? 'success' : 'pending'}`}>
+                {String(resultado["Recibe paquete"] ?? "").toUpperCase() === 'SI' ? 'Se le entregará' : 'No recibe'}
               </span>
-              
+
               <div style={{ marginTop: '1.2rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {resultado["Tipo de paquete"] && (
                   <p style={{ fontWeight: 700, color: 'var(--primary)', borderLeft: '3px solid var(--primary)', paddingLeft: '10px' }}>
@@ -221,16 +237,16 @@ export default function Home() {
                     ⏰ Hora: {resultado.hora}
                   </p>
                 )}
-                
+
                 {resultado["Tipo de documento del niño"] && (
                   <p style={{ fontSize: '1.2rem', opacity: 0.7, marginTop: '0.5rem' }}>
-                    DOC: {resultado["Tipo de documento del niño"]} {resultado["Número de documento del niño"]}
+                    DOC: {resultado["Tipo de documento del niño"]} {String(resultado["Número de documento del niño"] ?? "")}
                   </p>
                 )}
               </div>
             </div>
           </div>
-          
+
           <button onClick={handleReset} className="btn btn-secondary">
             Buscar Otro
           </button>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import * as XLSX from "xlsx";
 import styles from "../dashboard.module.css";
 import { REQUIRED_KID_COLUMNS } from "@/lib/types/kid";
 import TemplateDownloadButton from "./TemplateDownloadButton";
@@ -20,10 +19,13 @@ export default function ImportPage() {
   const [mode, setMode] = useState<ImportMode>("merge");
   const [confirmReplace, setConfirmReplace] = useState(false);
 
-  const validateAndParseExcel = useCallback((f: File) => {
+  const validateAndParseExcel = useCallback(async (f: File) => {
     setError(null);
     setSuccess(null);
     setConfirmReplace(false);
+
+    // Lazy-load XLSX (~700 KB) only when the user uploads a file.
+    const XLSX = await import("xlsx");
 
     const reader = new FileReader();
     reader.onload = (e) => {

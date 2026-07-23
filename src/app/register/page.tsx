@@ -68,6 +68,7 @@ export default function RegisterPage() {
                 onChange={(e) => setUsername(e.target.value)}
                 disabled={loading}
                 required
+                aria-invalid={!!error}
               />
 
               <label htmlFor="email" className="visually-hidden">Correo electrónico</label>
@@ -80,8 +81,9 @@ export default function RegisterPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={loading}
                 required
+                aria-invalid={!!error}
               />
-              
+
               <label htmlFor="register-password" className="visually-hidden">Contraseña</label>
               <input
                 id="register-password"
@@ -94,6 +96,7 @@ export default function RegisterPage() {
                 required
                 minLength={6}
                 aria-describedby={error ? "register-error" : undefined}
+                aria-invalid={!!error}
               />
             </div>
 

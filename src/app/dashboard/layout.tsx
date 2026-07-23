@@ -1,96 +1,155 @@
 "use client";
 
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Home, Upload, Database, FileText, LogOut, Menu, X } from "lucide-react";
 import styles from "./dashboard.module.css";
+
+interface NavItem {
+  href: string;
+  label: string;
+  icon: React.ComponentType<{ size?: number; "aria-hidden"?: boolean }>;
+}
+
+const NAV_ITEMS: ReadonlyArray<NavItem> = [
+  { href: "/dashboard", label: "Resumen", icon: Home },
+  { href: "/dashboard/import", label: "Importar Datos", icon: Upload },
+  { href: "/dashboard/kids", label: "Base de Datos Niños", icon: Database },
+  { href: "/dashboard/manage", label: "Historial de Consultas", icon: FileText },
+];
+
+const DRAWER_STORAGE_KEY = "dashboard:drawer-open";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const stored = sessionStorage.getItem(DRAWER_STORAGE_KEY);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (stored === "true") setDrawerOpen(true);
+  }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setDrawerOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setDrawerOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [drawerOpen]);
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [drawerOpen]);
+
+  const toggleDrawer = useCallback(() => {
+    setDrawerOpen((prev) => {
+      const next = !prev;
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem(DRAWER_STORAGE_KEY, String(next));
+      }
+      return next;
+    });
+  }, []);
+
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    window.location.href = "/login";
+  };
 
   return (
     <div className={styles.dashboardLayout}>
-      <aside className={styles.sidebar}>
+      {/* Hamburger — mobile only */}
+      <button
+        type="button"
+        onClick={toggleDrawer}
+        className={styles.hamburgerBtn}
+        aria-label={drawerOpen ? "Cerrar menú" : "Abrir menú"}
+        aria-expanded={drawerOpen}
+        aria-controls="dashboard-drawer"
+      >
+        {drawerOpen ? <X size={22} aria-hidden /> : <Menu size={22} aria-hidden />}
+      </button>
+
+      {/* Mobile drawer + backdrop */}
+      <div
+        className={`${styles.backdrop} ${drawerOpen ? styles.backdropVisible : ""}`}
+        onClick={() => setDrawerOpen(false)}
+        aria-hidden="true"
+      />
+      <aside
+        id="dashboard-drawer"
+        className={`${styles.sidebar} ${styles.mobileDrawer} ${drawerOpen ? styles.drawerOpen : ""}`}
+        aria-label="Navegación principal"
+      >
         <div className={styles.brand}>ospinajuanp-admin</div>
-
-        <nav className={styles.navLinks}>
-          <Link href="/dashboard" className={`${styles.navLink} ${pathname === "/dashboard" ? styles.active : ""}`}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="7" height="7"></rect>
-              <rect x="14" y="3" width="7" height="7"></rect>
-              <rect x="14" y="14" width="7" height="7"></rect>
-              <rect x="3" y="14" width="7" height="7"></rect>
-            </svg>
-            Resumen
-          </Link>
-
-          <Link href="/dashboard/import" className={`${styles.navLink} ${pathname === "/dashboard/import" ? styles.active : ""}`}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"></path>
-              <polyline points="17 8 12 3 7 8"></polyline>
-              <line x1="12" y1="3" x2="12" y2="15"></line>
-            </svg>
-            Importar Datos
-          </Link>
-
-          <Link href="/dashboard/kids" className={`${styles.navLink} ${pathname === "/dashboard/kids" ? styles.active : ""}`}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-              <circle cx="9" cy="7" r="4"></circle>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-            </svg>
-            Base de Datos Niños
-          </Link>
-
-          <Link href="/dashboard/manage" className={`${styles.navLink} ${pathname === "/dashboard/manage" ? styles.active : ""}`}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-              <line x1="16" y1="13" x2="8" y2="13"></line>
-              <line x1="16" y1="17" x2="8" y2="17"></line>
-              <polyline points="10 9 9 9 8 9"></polyline>
-            </svg>
-            Historial de Consultas
-          </Link>
-        </nav>
-
-        <div style={{ marginTop: "2rem" }}>
+        <NavLinks items={NAV_ITEMS} currentPath={pathname} />
+        <div className={styles.sidebarFooter}>
           <button
-            onClick={async () => {
-              await fetch("/api/auth/logout", { method: "POST" });
-              window.location.href = "/login";
-            }}
-            style={{
-              width: "100%",
-              background: "rgba(239, 68, 68, 0.1)",
-              color: "#fca5a5",
-              border: "1px solid rgba(239, 68, 68, 0.2)",
-              padding: "0.875rem",
-              borderRadius: "12px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "0.5rem",
-              cursor: "pointer",
-              fontWeight: 600,
-              transition: "all 0.3s ease",
-            }}
-            onMouseOver={(e) => { e.currentTarget.style.background = "rgba(239, 68, 68, 0.2)"; }}
-            onMouseOut={(e) => { e.currentTarget.style.background = "rgba(239, 68, 68, 0.1)"; }}
+            type="button"
+            onClick={handleLogout}
+            className={styles.btnLogout}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-              <polyline points="16 17 21 12 16 7"></polyline>
-              <line x1="21" y1="12" x2="9" y2="12"></line>
-            </svg>
-            Cerrar Sesión
+            <LogOut size={18} aria-hidden />
+            <span>Cerrar Sesión</span>
           </button>
         </div>
       </aside>
 
-      <main className={styles.mainContent}>
-        {children}
-      </main>
+      {/* Desktop sidebar (same content, different CSS) */}
+      <aside
+        className={`${styles.sidebar} ${styles.desktopSidebar}`}
+        aria-label="Navegación principal"
+      >
+        <div className={styles.brand}>ospinajuanp-admin</div>
+        <NavLinks items={NAV_ITEMS} currentPath={pathname} />
+        <div className={styles.sidebarFooter}>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className={styles.btnLogout}
+          >
+            <LogOut size={18} aria-hidden />
+            <span>Cerrar Sesión</span>
+          </button>
+        </div>
+      </aside>
+
+      <main className={styles.mainContent}>{children}</main>
     </div>
+  );
+}
+
+function NavLinks({ items, currentPath }: { items: ReadonlyArray<NavItem>; currentPath: string }) {
+  return (
+    <nav className={styles.navLinks}>
+      {items.map(({ href, label, icon: Icon }) => {
+        const isActive = currentPath === href;
+        return (
+          <Link
+            key={href}
+            href={href}
+            className={`${styles.navLink} ${isActive ? styles.active : ""}`}
+            aria-current={isActive ? "page" : undefined}
+          >
+            <Icon size={20} aria-hidden />
+            <span>{label}</span>
+          </Link>
+        );
+      })}
+    </nav>
   );
 }

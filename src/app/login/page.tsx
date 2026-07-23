@@ -1,22 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function LoginPage() {
-  const [identifier, setIdentifier] = useState(() => {
-    if (typeof window === "undefined") return "";
-    return localStorage.getItem("login-identifier") ?? "";
-  });
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return localStorage.getItem("login-remember-me") === "true";
-  });
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const savedIdentifier = localStorage.getItem("login-identifier");
+    const savedRemember = localStorage.getItem("login-remember-me") === "true";
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (savedIdentifier) setIdentifier(savedIdentifier);
+    if (savedRemember) setRememberMe(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,8 +83,9 @@ export default function LoginPage() {
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               disabled={loading}
+              aria-invalid={!!error}
             />
-            
+
             <label htmlFor="password" className="visually-hidden">Contraseña</label>
             <input
               id="password"
@@ -93,6 +97,7 @@ export default function LoginPage() {
               disabled={loading}
               required
               aria-describedby={error ? "login-error" : undefined}
+              aria-invalid={!!error}
             />
 
             <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.9rem', color: 'var(--text-light)', marginTop: '0.5rem' }}>
