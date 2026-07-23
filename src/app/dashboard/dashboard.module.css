@@ -19,6 +19,14 @@
   width: 260px;
   min-width: 260px;
   flex-shrink: 0;
+  /* Sticky so the sidebar fills the viewport (100vh) regardless of page
+     length. align-self: flex-start is required inside the row flex container
+     so the sidebar doesn't stretch to match .dashboardLayout's full height. */
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100vh;
+  overflow-y: auto;
   background: rgba(15, 23, 42, 0.6);
   backdrop-filter: blur(12px);
   border-right: 1px solid rgba(255, 255, 255, 0.05);

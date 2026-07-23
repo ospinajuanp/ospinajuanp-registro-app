@@ -107,6 +107,7 @@ export default function Home() {
   };
 
   return (
+    <div className="public-page-wrapper">
       <main
         id="main-content"
         className="main-container"
@@ -253,5 +254,6 @@ export default function Home() {
         </div>
       )}
     </main>
+    </div>
   );
 }

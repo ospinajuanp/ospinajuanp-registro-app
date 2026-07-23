@@ -67,7 +67,8 @@ export default function LoginPage() {
   };
 
   return (
-    <main id="main-content" className="main-container" style={{ backgroundImage: 'none', backgroundColor: 'var(--bg)' }}>
+    <div className="public-page-wrapper">
+      <main id="main-content" className="main-container" style={{ backgroundImage: 'none', backgroundColor: 'var(--bg)' }}>
       <div className="input-group">
         <h1>Iniciar Sesión</h1>
         <p>Ingresa para acceder al panel de administración.</p>
@@ -133,6 +134,7 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
-    </main>
+      </main>
+    </div>
   );
 }

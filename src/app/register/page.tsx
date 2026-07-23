@@ -44,6 +44,7 @@ export default function RegisterPage() {
   };
 
   return (
+    <div className="public-page-wrapper">
     <main id="main-content" className="main-container" style={{ backgroundImage: 'none', backgroundColor: 'var(--bg)' }}>
       <div className="input-group">
         <h1>Registro</h1>
@@ -123,5 +124,6 @@ export default function RegisterPage() {
         </div>
       </div>
     </main>
+    </div>
   );
 }
