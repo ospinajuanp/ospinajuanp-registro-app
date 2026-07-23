@@ -45,6 +45,11 @@
   display: none;
 }
 
+/* Bottom tab bar — mobile only (visible via media query in <680px block) */
+.bottom-tab-bar {
+  display: none;
+}
+
 .sidebarFooter {
   margin-top: auto;
   padding-top: 1.5rem;
@@ -584,87 +589,72 @@
     flex-direction: column;
   }
 
-  /* Hide desktop sidebar, show mobile drawer */
-  .desktopSidebar {
+  /* Hide desktop sidebar on mobile — bottom tab bar takes over */
+  .sidebar {
     display: none;
   }
 
-  .mobileDrawer {
+  /* Bottom tab bar — fixed, thumb-zone accessible */
+  .bottom-tab-bar {
     display: flex;
     position: fixed;
-    top: 0;
-    left: 0;
     bottom: 0;
-    width: 280px;
-    max-width: 85vw;
-    z-index: 60;
-    transform: translateX(-100%);
-    transition: transform 0.25s ease-out;
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.4rem 0.25rem calc(0.4rem + env(safe-area-inset-bottom));
+    justify-content: space-around;
+    align-items: stretch;
+    gap: 0.25rem;
   }
 
-  .mobileDrawer.drawerOpen {
-    transform: translateX(0);
-  }
-
-  .hamburgerBtn {
-    display: inline-flex;
-    position: fixed;
-    top: 0.75rem;
-    left: 0.75rem;
-    z-index: 70;
-    width: 44px;
-    height: 44px;
+  .bottom-tab-bar :global(.bottom-tab) {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: rgba(15, 23, 42, 0.85);
-    color: #f8fafc;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 0.2rem;
+    min-height: 56px;
+    padding: 0.4rem 0.25rem;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-family: inherit;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-decoration: none;
     border-radius: 10px;
     cursor: pointer;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    transition: color 0.15s, background 0.15s;
   }
 
-  .hamburgerBtn:focus-visible {
+  .bottom-tab-bar :global(.bottom-tab:hover) {
+    color: #f8fafc;
+  }
+
+  .bottom-tab-bar :global(.bottom-tab:focus-visible) {
     outline: 2px solid #38bdf8;
-    outline-offset: 2px;
+    outline-offset: -2px;
   }
 
-  .backdrop {
-    display: block;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 55;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease-out;
+  .bottom-tab-bar :global(.bottom-tab-active) {
+    color: #38bdf8;
   }
 
-  .backdrop.backdropVisible {
-    opacity: 1;
-    pointer-events: auto;
+  .bottom-tab-bar :global(.bottom-tab-label) {
+    font-size: 0.7rem;
+    line-height: 1;
+    letter-spacing: 0.2px;
   }
 
-  /* Push main content below the hamburger so it doesn't overlap */
+  /* Main content needs bottom padding so the tab bar doesn't cover content */
   .mainContent {
-    padding: 4rem 1rem 1.25rem;
-  }
-
-  .navLinks {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .navLink {
-    min-height: 44px;
-    padding: 0.75rem 1rem;
-    font-size: 0.95rem;
-  }
-
-  .btnLogout {
-    min-height: 48px;
+    padding: 1.25rem 1rem calc(80px + env(safe-area-inset-bottom));
   }
 
   /* Section titles: centered on mobile */

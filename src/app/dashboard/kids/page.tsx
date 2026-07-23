@@ -234,6 +234,16 @@ export default function KidsManager() {
         )}
       </div>
 
+      {/* Pagination (top) */}
+      {!loading && filteredKids.length > 0 && (
+        <Pagination
+          currentPage={safePage}
+          pageSize={pageSize}
+          totalItems={filteredKids.length}
+          onPageChange={handlePageChange}
+        />
+      )}
+
       {/* Table */}
       {loading && !modalOpen ? (
         <div className={s.loadingBox}>
