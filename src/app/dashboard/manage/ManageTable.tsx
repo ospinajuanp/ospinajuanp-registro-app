@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import type { VisitLog } from "@/lib/types/visit";
 import Pagination from "@/components/Pagination";
+import MobileVisitCard from "./MobileVisitCard";
 import styles from "../dashboard.module.css";
 
 interface ManageTableProps {
@@ -111,6 +112,24 @@ export default function ManageTable({ visits }: ManageTableProps) {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Mobile cards list — hidden on desktop via CSS */}
+      <div className={styles.mobileList}>
+        {paginatedVisits.length === 0 ? (
+          <div className={styles.mobileEmptyState}>
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: "block", margin: "0 auto 1rem", opacity: 0.4 }}>
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <p>No hay consultas registradas aún.</p>
+          </div>
+        ) : (
+          paginatedVisits.map((visit) => (
+            <MobileVisitCard key={visit.uniqueId} visit={visit} />
+          ))
+        )}
       </div>
     </>
   );

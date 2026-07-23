@@ -8,6 +8,7 @@ import s from "./kids.module.css";
 import type { Kid } from "@/lib/types/kid";
 import Pagination from "@/components/Pagination";
 import { kidMatchesSearch } from "@/lib/utils/kidSearch";
+import MobileKidsCard from "./MobileKidsCard";
 
 const defaultKid: Kid = {
   "Tipo de documento del niño": "RC",
@@ -317,6 +318,36 @@ export default function KidsManager() {
               )}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Mobile cards list — hidden on desktop via CSS */}
+      {!loading && !modalOpen && (
+        <div className={s.mobileList}>
+          {paginatedKids.length === 0 ? (
+            <div className={s.emptyState}>
+              <svg className={s.emptyIcon} width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <p>{kids.length === 0 ? "No hay niños registrados en la base de datos." : "No se encontraron niños con esa búsqueda."}</p>
+            </div>
+          ) : (
+            paginatedKids.map((kid, i) => {
+              const docId = String(kid["Número de documento del niño"] ?? "");
+              return (
+                <MobileKidsCard
+                  key={docId || i}
+                  kid={kid}
+                  isSelected={selectedKids.includes(docId)}
+                  onSelect={toggleSelect}
+                  onEdit={handleOpenEdit}
+                  onDelete={handleDelete}
+                />
+              );
+            })
+          )}
         </div>
       )}
 
