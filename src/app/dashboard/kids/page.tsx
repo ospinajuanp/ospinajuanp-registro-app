@@ -9,6 +9,8 @@ import type { Kid } from "@/lib/types/kid";
 import Pagination from "@/components/Pagination";
 import { kidMatchesSearch } from "@/lib/utils/kidSearch";
 import MobileKidsCard from "./MobileKidsCard";
+import AlertDialog, { type AlertVariant } from "@/components/AlertDialog";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 const defaultKid: Kid = {
   "Tipo de documento del niño": "RC",
@@ -33,6 +35,12 @@ export default function KidsManager() {
   const [deleteStep, setDeleteStep] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
+  const [pendingDelete, setPendingDelete] = useState<
+    { kind: "one"; docId: string } | { kind: "selected" } | null
+  >(null);
+  const [alert, setAlert] = useState<
+    { title: string; message: string; variant: AlertVariant } | null
+  >(null);
 
   const loadKids = async () => {
     setLoading(true);
@@ -58,12 +66,8 @@ export default function KidsManager() {
     setModalOpen(true);
   };
 
-  const handleDelete = async (docId: string) => {
-    if (!confirm("¿Estás seguro de que deseas eliminar este registro?")) return;
-    setLoading(true);
-    const res = await deleteKid(docId);
-    if (res.success) await loadKids();
-    else setLoading(false);
+  const handleDelete = (docId: string) => {
+    setPendingDelete({ kind: "one", docId });
   };
 
   const handleDeleteAllStep = async () => {
@@ -73,12 +77,20 @@ export default function KidsManager() {
       setLoading(true);
       const res = await deleteAllKids();
       if (res.success) {
-        alert("Todos los registros han sido eliminados.");
         await loadKids();
         setDeleteStep(0);
+        setAlert({
+          title: "Base de datos limpiada",
+          message: "Todos los registros han sido eliminados.",
+          variant: "success",
+        });
       } else {
-        alert("Error al eliminar los datos.");
         setLoading(false);
+        setAlert({
+          title: "Error al eliminar",
+          message: "No se pudo completar la limpieza.",
+          variant: "error",
+        });
       }
     }
   };
@@ -92,17 +104,51 @@ export default function KidsManager() {
     return configs[deleteStep] || configs[0];
   };
 
-  const handleDeleteSelected = async () => {
-    if (!confirm(`¿Estás seguro de eliminar los ${selectedKids.length} registros seleccionados?`)) return;
+  const handleDeleteSelected = () => {
+    if (selectedKids.length === 0) return;
+    setPendingDelete({ kind: "selected" });
+  };
+
+  const confirmDelete = async () => {
+    if (!pendingDelete) return;
+    const action = pendingDelete;
+    setPendingDelete(null);
     setLoading(true);
-    const res = await deleteMultipleKids(selectedKids);
-    if (res.success) await loadKids();
-    else setLoading(false);
+
+    let res: { success: boolean; error?: string };
+    if (action.kind === "one") {
+      res = await deleteKid(action.docId);
+    } else {
+      res = await deleteMultipleKids(selectedKids);
+    }
+
+    if (res.success) {
+      await loadKids();
+      setAlert({
+        title:
+          action.kind === "one"
+            ? "Registro eliminado"
+            : `${selectedKids.length} registros eliminados`,
+        message: "La operación se completó correctamente.",
+        variant: "success",
+      });
+    } else {
+      setLoading(false);
+      setAlert({
+        title: "Error al eliminar",
+        message: res.error ?? "No se pudo completar la eliminación.",
+        variant: "error",
+      });
+    }
   };
 
   const handleDownloadExcel = async () => {
     if (kids.length === 0) {
-      alert("No hay datos para descargar");
+      setAlert({
+        title: "Sin datos",
+        message: "No hay registros para descargar.",
+        variant: "info",
+      });
       return;
     }
 
@@ -416,6 +462,32 @@ export default function KidsManager() {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        title={
+          pendingDelete?.kind === "selected"
+            ? `Eliminar ${selectedKids.length} registros`
+            : "Eliminar registro"
+        }
+        message={
+          pendingDelete?.kind === "selected"
+            ? `Vas a eliminar ${selectedKids.length} registros seleccionados. Esta acción no se puede deshacer.`
+            : "Vas a eliminar este registro. Esta acción no se puede deshacer."
+        }
+        confirmLabel="Eliminar"
+        variant="danger"
+        onConfirm={confirmDelete}
+        onCancel={() => setPendingDelete(null)}
+      />
+
+      <AlertDialog
+        open={alert !== null}
+        title={alert?.title ?? ""}
+        message={alert?.message ?? ""}
+        variant={alert?.variant ?? "info"}
+        onClose={() => setAlert(null)}
+      />
     </div>
   );
 }

@@ -5,10 +5,14 @@ import { Trash2, AlertCircle, AlertTriangle } from "lucide-react";
 import { deleteAllVisits } from "../../actions";
 import { useRouter } from "next/navigation";
 import styles from "../dashboard.module.css";
+import AlertDialog, { type AlertVariant } from "@/components/AlertDialog";
 
 export default function DeleteDataButton({ count }: { count: number }) {
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [alert, setAlert] = useState<
+    { title: string; message: string; variant: AlertVariant } | null
+  >(null);
   const router = useRouter();
 
   const handleNextStep = async () => {
@@ -18,11 +22,19 @@ export default function DeleteDataButton({ count }: { count: number }) {
       setLoading(true);
       const result = await deleteAllVisits();
       if (result.success) {
-        alert("Todos los registros han sido eliminados.");
         router.refresh();
         setStep(0);
+        setAlert({
+          title: "Historial limpiado",
+          message: "Todos los registros de visitas han sido eliminados.",
+          variant: "success",
+        });
       } else {
-        alert("Error: " + result.error);
+        setAlert({
+          title: "Error al eliminar",
+          message: result.error || "No se pudo completar la operación.",
+          variant: "error",
+        });
       }
       setLoading(false);
     }
@@ -111,6 +123,14 @@ export default function DeleteDataButton({ count }: { count: number }) {
           Cancelar
         </button>
       )}
+
+      <AlertDialog
+        open={alert !== null}
+        title={alert?.title ?? ""}
+        message={alert?.message ?? ""}
+        variant={alert?.variant ?? "info"}
+        onClose={() => setAlert(null)}
+      />
     </div>
   );
 }
