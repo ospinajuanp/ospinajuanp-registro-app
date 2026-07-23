@@ -592,9 +592,10 @@
   }
 
   /* Bottom tab bar styles live in globals.css (plain class names).
-     Here we only add the bottom padding so the tab bar doesn't cover content. */
+     Here we only add the bottom padding so the tab bar doesn't cover content.
+     100px leaves breathing room above the bar even on iOS with the home indicator. */
   .mainContent {
-    padding: 1.25rem 1rem calc(80px + env(safe-area-inset-bottom));
+    padding: 1.25rem 1rem calc(100px + env(safe-area-inset-bottom));
   }
 
   /* Section titles: centered on mobile */

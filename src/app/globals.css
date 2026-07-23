@@ -396,6 +396,16 @@ p {
   }
 }
 
+@media (max-width: 680px) {
+  /* Bottom tab bar lives at viewport bottom (position: fixed). Add a matching
+     padding-bottom to <html> so the page can always scroll past the last
+     content by the tab bar height + safe-area, ensuring the user can reach
+     the bottom without the bar covering the last row. */
+  html {
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  }
+}
+
 /* ── Bottom Tab Bar (mobile only) ── */
 .bottom-tab-bar {
   display: none;
