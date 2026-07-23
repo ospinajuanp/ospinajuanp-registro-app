@@ -365,6 +365,14 @@ p {
   h1 {
     font-size: 1.8rem;
   }
+
+  /* The home page (/, captura) renders a background image with the "Buen
+     Comienzo" wordmark inside it. On small screens the .input-group's
+     default 2rem top margin isn't enough — the welcome heading overlaps
+     that wordmark. Push the heading down 95px so it always clears it. */
+  .welcome-heading {
+    margin-top: 95px;
+  }
 }
 
 .skip-link {

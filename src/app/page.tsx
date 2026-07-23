@@ -131,7 +131,7 @@ export default function Home() {
         )}
       {!resultado ? (
         <div className="input-group">
-          <h1>¡Bienvenido!</h1>
+          <h1 className="welcome-heading">¡Bienvenido!</h1>
           
           {showCaptureForm ? (
             <div className="capture-form">
