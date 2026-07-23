@@ -45,10 +45,7 @@
   display: none;
 }
 
-/* Bottom tab bar — mobile only (visible via media query in <680px block) */
-.bottom-tab-bar {
-  display: none;
-}
+/* Bottom tab bar styles live in globals.css so plain-string class names match. */
 
 .sidebarFooter {
   margin-top: auto;
@@ -594,65 +591,8 @@
     display: none;
   }
 
-  /* Bottom tab bar — fixed, thumb-zone accessible */
-  .bottom-tab-bar {
-    display: flex;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 50;
-    background: rgba(15, 23, 42, 0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 0.4rem 0.25rem calc(0.4rem + env(safe-area-inset-bottom));
-    justify-content: space-around;
-    align-items: stretch;
-    gap: 0.25rem;
-  }
-
-  .bottom-tab-bar :global(.bottom-tab) {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.2rem;
-    min-height: 56px;
-    padding: 0.4rem 0.25rem;
-    background: transparent;
-    border: none;
-    color: #94a3b8;
-    font-family: inherit;
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-decoration: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: color 0.15s, background 0.15s;
-  }
-
-  .bottom-tab-bar :global(.bottom-tab:hover) {
-    color: #f8fafc;
-  }
-
-  .bottom-tab-bar :global(.bottom-tab:focus-visible) {
-    outline: 2px solid #38bdf8;
-    outline-offset: -2px;
-  }
-
-  .bottom-tab-bar :global(.bottom-tab-active) {
-    color: #38bdf8;
-  }
-
-  .bottom-tab-bar :global(.bottom-tab-label) {
-    font-size: 0.7rem;
-    line-height: 1;
-    letter-spacing: 0.2px;
-  }
-
-  /* Main content needs bottom padding so the tab bar doesn't cover content */
+  /* Bottom tab bar styles live in globals.css (plain class names).
+     Here we only add the bottom padding so the tab bar doesn't cover content. */
   .mainContent {
     padding: 1.25rem 1rem calc(80px + env(safe-area-inset-bottom));
   }
