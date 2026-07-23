@@ -199,11 +199,11 @@ p {
 }
 
 .capture-form-wrapper--animate {
-  animation: slideDownCaptureForm 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideDownCaptureForm 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .capture-form-wrapper--shown {
-  max-height: 600px;
+  max-height: 700px;
   opacity: 1;
 }
 
@@ -211,13 +211,13 @@ p {
   0% {
     max-height: 0;
     opacity: 0;
-    transform: translateY(-12px);
+    transform: translateY(-20px);
   }
-  60% {
+  40% {
     opacity: 1;
   }
   100% {
-    max-height: 600px;
+    max-height: 700px;
     opacity: 1;
     transform: translateY(0);
   }

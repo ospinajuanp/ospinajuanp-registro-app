@@ -42,13 +42,16 @@ export default function Home() {
     const lastSeen = getLastSeenTimestamp();
     let timer: ReturnType<typeof setTimeout> | undefined;
     if (lastSeen === null || !isSameLocalDay(lastSeen, now)) {
-      setLastSeenTimestamp(now);
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setShouldAnimateCaptureForm(true);
-      timer = setTimeout(
-        () => setHasAnimatedCaptureForm(true),
-        CAPTURE_FORM_ANIMATION_MS,
-      );
+      // Save the timestamp INSIDE the timer callback (not here) so that
+      // React StrictMode's double-invocation in dev doesn't immediately
+      // cancel the animation: on the second pass the localStorage entry
+      // is still empty, so the "first visit" decision stays valid.
+      timer = setTimeout(() => {
+        setLastSeenTimestamp(now);
+        setHasAnimatedCaptureForm(true);
+      }, CAPTURE_FORM_ANIMATION_MS);
     } else {
       setHasAnimatedCaptureForm(true);
     }

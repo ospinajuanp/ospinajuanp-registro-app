@@ -10,7 +10,7 @@
  */
 
 export const CAPTURE_FORM_STORAGE_KEY = "capture-form-last-seen";
-export const CAPTURE_FORM_ANIMATION_MS = 700;
+export const CAPTURE_FORM_ANIMATION_MS = 1000;
 
 export function getLastSeenTimestamp(): number | null {
   if (typeof window === "undefined") return null;
