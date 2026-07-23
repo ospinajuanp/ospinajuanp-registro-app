@@ -190,37 +190,35 @@ p {
 /* Capture form: slide-down (persiana / acordeón) entrance animation.
    Plays once per day per browser (gated by localStorage timestamp in
    src/lib/utils/captureFormAnimation). On subsequent visits the form
-   is rendered with .capture-form-wrapper--shown so no animation runs. */
+   is rendered with .capture-form-wrapper--shown so no animation runs.
+
+   The wrapper is a CSS Grid container; animating grid-template-rows from
+   0fr to 1fr makes the row grow from 0 to the child's natural height
+   without having to hard-code a max-height. That way the animation
+   keeps moving across the full duration regardless of the form's actual
+   content height — unlike max-height, where the visible change stops
+   once the value exceeds the inner content. */
 .capture-form-wrapper {
-  width: 100%;
-  overflow: hidden;
-  max-height: 0;
+  display: grid;
+  grid-template-rows: 0fr;
   opacity: 0;
+  transition: grid-template-rows 1s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.5s ease-out;
+}
+
+.capture-form-wrapper > .capture-form {
+  min-height: 0;
+  overflow: hidden;
 }
 
 .capture-form-wrapper--animate {
-  animation: slideDownCaptureForm 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.capture-form-wrapper--shown {
-  max-height: 700px;
+  grid-template-rows: 1fr;
   opacity: 1;
 }
 
-@keyframes slideDownCaptureForm {
-  0% {
-    max-height: 0;
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  40% {
-    opacity: 1;
-  }
-  100% {
-    max-height: 700px;
-    opacity: 1;
-    transform: translateY(0);
-  }
+.capture-form-wrapper--shown {
+  grid-template-rows: 1fr;
+  opacity: 1;
 }
 
 .capture-form {
