@@ -549,7 +549,7 @@
 }
 
 /* ── Responsive ── */
-@media (max-width: 768px) {
+@media (max-width: 1220px) {
   /* Replace the table with the collapsible mobile cards */
   .tableContainer {
     display: none;

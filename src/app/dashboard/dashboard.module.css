@@ -747,8 +747,8 @@
 
 /* ── Responsive ── */
 
-/* Mobile (≤ 680px) */
-@media (max-width: 680px) {
+/* Mobile (≤ 1220px) */
+@media (max-width: 1220px) {
   .dashboardLayout {
     flex-direction: column;
   }
@@ -760,9 +760,9 @@
 
   /* Bottom tab bar styles live in globals.css (plain class names).
      Here we only add the bottom padding so the tab bar doesn't cover content.
-     100px leaves breathing room above the bar even on iOS with the home indicator. */
+     The value matches the bar's min-height exactly so there's no white band. */
   .mainContent {
-    padding: 1.25rem 1rem calc(100px + env(safe-area-inset-bottom));
+    padding: 1.25rem 1rem var(--bottom-bar-h);
   }
 
   /* Section titles: centered on mobile */

@@ -13,6 +13,11 @@
   --error: #d32f2f;
   --success: #198754;
   --bg:#00ADEF;
+
+  /* Bottom tab bar height: 56px tab + 0.8rem vertical padding + safe area.
+     Used by .bottom-tab-bar (min-height) and by html/.mainContent
+     (padding-bottom) so they always match exactly — no white band. */
+  --bottom-bar-h: calc(56px + 0.8rem + env(safe-area-inset-bottom));
 }
 
 * {
@@ -396,13 +401,13 @@ p {
   }
 }
 
-@media (max-width: 680px) {
+@media (max-width: 1220px) {
   /* Bottom tab bar lives at viewport bottom (position: fixed). Add a matching
      padding-bottom to <html> so the page can always scroll past the last
      content by the tab bar height + safe-area, ensuring the user can reach
      the bottom without the bar covering the last row. */
   html {
-    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+    padding-bottom: var(--bottom-bar-h);
   }
 }
 
@@ -451,7 +456,7 @@ p {
   letter-spacing: 0.2px;
 }
 
-@media (max-width: 680px) {
+@media (max-width: 1220px) {
   .bottom-tab-bar {
     display: flex;
     position: fixed;
@@ -459,6 +464,7 @@ p {
     left: 0;
     right: 0;
     z-index: 50;
+    min-height: var(--bottom-bar-h);
     background: rgba(15, 23, 42, 0.92);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
