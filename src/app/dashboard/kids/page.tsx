@@ -320,15 +320,6 @@ export default function KidsManager() {
         </div>
       )}
 
-      {!loading && (
-        <Pagination
-          currentPage={safePage}
-          pageSize={pageSize}
-          totalItems={filteredKids.length}
-          onPageChange={handlePageChange}
-        />
-      )}
-
       {/* Modal */}
       {modalOpen && (
         <div className={s.modalOverlay}>
