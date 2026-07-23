@@ -45,6 +45,13 @@ export default function ManageTable({ visits }: ManageTableProps) {
 
   return (
     <>
+      <Pagination
+        currentPage={safePage}
+        pageSize={pageSize}
+        totalItems={visits.length}
+        onPageChange={handlePageChange}
+      />
+
       <div className={styles.tableWrapper}>
         <div className={styles.tableScroll}>
           <table className={styles.manageTable}>
@@ -105,13 +112,6 @@ export default function ManageTable({ visits }: ManageTableProps) {
           </table>
         </div>
       </div>
-
-      <Pagination
-        currentPage={safePage}
-        pageSize={pageSize}
-        totalItems={visits.length}
-        onPageChange={handlePageChange}
-      />
     </>
   );
 }
